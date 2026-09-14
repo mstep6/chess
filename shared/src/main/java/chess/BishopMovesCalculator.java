@@ -3,44 +3,66 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopMovesCalculator {
+public class BishopMovesCalculator implements PieceMovesCalculator {
     private final ChessBoard board;
-    private ChessPosition start_pos;
-    private final int start_row;
-    private final int start_col;
-    private Collection<ChessMove> possible_moves;
+    private ChessPosition startPos;
+    private final int startRow;
+    private final int startCol;
+    private Collection<ChessMove> possibleMoves;
 
-    public BishopMovesCalculator(ChessBoard board, ChessPosition start_pos) {
+    public BishopMovesCalculator(ChessBoard board, ChessPosition startPos) {
         this.board = board;
-        this.start_row = start_pos.getRow();
-        this.start_col = start_pos.getColumn();
-        this.possible_moves = new ArrayList<>();
+        this.startRow = startPos.getRow();
+        this.startCol = startPos.getColumn();
+        this.possibleMoves = new ArrayList<>();
     }
 
-    public void CalculateBishopMoves(ChessBoard board, int start_row, int start_col) {
-        boolean blocked = true;
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
+        int startRow = position.getRow();
+        int startCol = position.getColumn();
+        diagonal_moves(board, startRow, startCol, 1, -1);
+        diagonal_moves(board, startRow, startCol, 1, 1);
+        diagonal_moves(board, startRow, startCol, -1, -1);
+        diagonal_moves(board, startRow, startCol, -1, 1);
+        return possibleMoves;
     }
 
-    public boolean validMove(ChessBoard board, ChessPosition next_position, ChessGame.TeamColor curr_color) {
-        ChessPiece next_piece = board.getPiece(next_position);
-        ChessGame.TeamColor color = next_piece.getTeamColor();
-//        check to make sure you're not off the board
-//        check if the next position is empty, if not empty, check if it has a piece of the opposite color
 
-        return false;
+    public boolean inBounds(ChessPosition position) {
+        //Check to make sure you're not off the board
+        int row = position.getRow();
+        int col = position.getColumn();
+        if (row > 8 || row < 1 || col > 8 || col < 1) {
+            return false;
+        }
+        return true;
     }
 
-    public void left_diagonal_one(ChessBoard board, int start_row, int start_col) {
-        ChessPosition curr_pos = new ChessPosition(start_row, start_col);
-        ChessPiece curr_piece = board.getPiece(curr_pos);
-        ChessGame.TeamColor curr_color = curr_piece.getTeamColor();
-        ChessPosition next_pos = new ChessPosition(start_row + 1, start_col - 1);
+    public void diagonal_moves(ChessBoard board, int start_row, int start_col, int rowChange, int colChange) {
+        ChessPosition startPosition = new ChessPosition(start_row, start_col);
+        ChessPosition currPos = new ChessPosition(start_row, start_col);
+        ChessPiece currPiece = board.getPiece(currPos);
+        ChessGame.TeamColor currColor = currPiece.getTeamColor();
+        ChessPosition nextPos = new ChessPosition(start_row + rowChange, start_col + colChange);
 
-//        while (validMove(board, next_pos, curr_color ) {
-//             possible_moves.add(next_pos);
-//             next_pos = new ChessPosition(curr_row + 1, curr_col - 1);
-//        }
+        while (inBounds(nextPos)) {
+            currPos = nextPos;
+            nextPos = new ChessPosition(currPos.getRow() + rowChange, currPos.getColumn() + colChange);
+            currPiece = board.getPiece(currPos);
+            if (currPiece == null) {
+                possibleMoves.add(new ChessMove(startPosition, currPos, null));
+            }
+            else {
+                if (currPiece.getTeamColor() != currColor) {
+                    possibleMoves.add(new ChessMove(startPosition, currPos, null));
+                    break;
+                }
+                else {
+                    break;
+                }
+            }
 
+        }
     }
 
 
