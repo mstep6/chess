@@ -5,15 +5,12 @@ import java.util.Collection;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
     private final ChessBoard board;
-    private ChessPosition startPos;
-    private final int startRow;
-    private final int startCol;
+    private final ChessPosition startPos;
     private Collection<ChessMove> possibleMoves;
 
     public BishopMovesCalculator(ChessBoard board, ChessPosition startPos) {
         this.board = board;
-        this.startRow = startPos.getRow();
-        this.startCol = startPos.getColumn();
+        this.startPos = startPos;
         this.possibleMoves = new ArrayList<>();
     }
 
@@ -38,32 +35,28 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         return true;
     }
 
-    public void diagonal_moves(ChessBoard board, int start_row, int start_col, int rowChange, int colChange) {
-        ChessPosition startPosition = new ChessPosition(start_row, start_col);
-        ChessPosition currPos = new ChessPosition(start_row, start_col);
+    public void diagonal_moves(ChessBoard board, int startRow, int startCol, int rowChange, int colChange) {
+        ChessPosition currPos = startPos;
         ChessPiece currPiece = board.getPiece(currPos);
-        ChessGame.TeamColor currColor = currPiece.getTeamColor();
-        ChessPosition nextPos = new ChessPosition(start_row + rowChange, start_col + colChange);
+        ChessGame.TeamColor startColor = currPiece.getTeamColor();
+        ChessPosition nextPos = new ChessPosition(startRow + rowChange, startCol + colChange);
 
         while (inBounds(nextPos)) {
             currPos = nextPos;
             nextPos = new ChessPosition(currPos.getRow() + rowChange, currPos.getColumn() + colChange);
             currPiece = board.getPiece(currPos);
             if (currPiece == null) {
-                possibleMoves.add(new ChessMove(startPosition, currPos, null));
+                possibleMoves.add(new ChessMove(startPos, currPos, null));
             }
             else {
-                if (currPiece.getTeamColor() != currColor) {
-                    possibleMoves.add(new ChessMove(startPosition, currPos, null));
+                if (currPiece.getTeamColor() != startColor) {
+                    possibleMoves.add(new ChessMove(startPos, currPos, null));
                     break;
                 }
                 else {
                     break;
                 }
             }
-
         }
     }
-
-
 }
