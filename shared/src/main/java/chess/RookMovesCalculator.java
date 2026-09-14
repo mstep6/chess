@@ -3,12 +3,12 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopMovesCalculator implements PieceMovesCalculator {
+public class RookMovesCalculator implements PieceMovesCalculator {
     private final ChessBoard board;
     private final ChessPosition startPos;
     private Collection<ChessMove> possibleMoves;
 
-    public BishopMovesCalculator(ChessBoard board, ChessPosition startPos) {
+    public RookMovesCalculator(ChessBoard board, ChessPosition startPos) {
         this.board = board;
         this.startPos = startPos;
         this.possibleMoves = new ArrayList<>();
@@ -17,13 +17,12 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         int startRow = position.getRow();
         int startCol = position.getColumn();
-        diagonalMoves(board, startRow, startCol, 1, -1);
-        diagonalMoves(board, startRow, startCol, 1, 1);
-        diagonalMoves(board, startRow, startCol, -1, -1);
-        diagonalMoves(board, startRow, startCol, -1, 1);
+        horizontalVerticalMoves(board, startRow, startCol, 1, 0);
+        horizontalVerticalMoves(board, startRow, startCol, -1, 0);
+        horizontalVerticalMoves(board, startRow, startCol, 0, -1);
+        horizontalVerticalMoves(board, startRow, startCol, 0, 1);
         return possibleMoves;
     }
-
 
     public boolean inBounds(ChessPosition position) {
         //Check to make sure you're not off the board
@@ -35,7 +34,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         return true;
     }
 
-    public void diagonalMoves(ChessBoard board, int startRow, int startCol, int rowChange, int colChange) {
+    public void horizontalVerticalMoves(ChessBoard board, int startRow, int startCol, int rowChange, int colChange) {
         ChessPosition currPos = startPos;
         ChessPiece currPiece = board.getPiece(currPos);
         ChessGame.TeamColor startColor = currPiece.getTeamColor();
@@ -60,3 +59,5 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         }
     }
 }
+
+
