@@ -54,7 +54,6 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        //throw new RuntimeException("Not implemented");
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.BISHOP) {
             BishopMovesCalculator bishopMoves = new BishopMovesCalculator(board, myPosition);

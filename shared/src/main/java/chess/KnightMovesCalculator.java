@@ -17,14 +17,14 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         int startRow = position.getRow();
         int startCol = position.getColumn();
-        LMove(board, startRow, startCol, 2, 1); //up 2 R 1
-        LMove(board, startRow, startCol, 2, -1); //up 2 L 1
-        LMove(board, startRow, startCol, -2, 1); //down 2 R 1
-        LMove(board, startRow, startCol, -2, -1); //down 2 L 1
-        LMove(board, startRow, startCol, 1, 2); // up 1 R 2
-        LMove(board, startRow, startCol, 1, -2); // up 1 L 2
-        LMove(board, startRow, startCol, -1, 2); // down 1 R 2
-        LMove(board, startRow, startCol, -1, -2); // down 1 L 2
+        lMove(board, startRow, startCol, 2, 1); //up 2 R 1
+        lMove(board, startRow, startCol, 2, -1); //up 2 L 1
+        lMove(board, startRow, startCol, -2, 1); //down 2 R 1
+        lMove(board, startRow, startCol, -2, -1); //down 2 L 1
+        lMove(board, startRow, startCol, 1, 2); // up 1 R 2
+        lMove(board, startRow, startCol, 1, -2); // up 1 L 2
+        lMove(board, startRow, startCol, -1, 2); // down 1 R 2
+        lMove(board, startRow, startCol, -1, -2); // down 1 L 2
         return possibleMoves;
     }
 
@@ -38,7 +38,7 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         return true;
     }
 
-    public void LMove(ChessBoard board, int startRow, int startCol, int rowChange, int colChange) {
+    public void lMove(ChessBoard board, int startRow, int startCol, int rowChange, int colChange) {
         ChessPiece startPiece = board.getPiece(startPos);
         ChessGame.TeamColor startColor = startPiece.getTeamColor();
         ChessPosition nextPos = new ChessPosition(startRow + rowChange, startCol + colChange);

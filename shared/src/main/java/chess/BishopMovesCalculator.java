@@ -24,7 +24,6 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         return possibleMoves;
     }
 
-
     public boolean inBounds(ChessPosition position) {
         //Check to make sure you're not off the board
         int row = position.getRow();
