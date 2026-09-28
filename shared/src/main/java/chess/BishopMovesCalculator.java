@@ -3,7 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopMovesCalculator implements PieceMovesCalculator {
+public class BishopMovesCalculator implements PieceMovesCalculator{
     private final ChessBoard board;
     private final ChessPosition startPos;
     private Collection<ChessMove> possibleMoves;
@@ -15,47 +15,11 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-        int startRow = position.getRow();
-        int startCol = position.getColumn();
-        diagonalMoves(board, startRow, startCol, 1, -1);
-        diagonalMoves(board, startRow, startCol, 1, 1);
-        diagonalMoves(board, startRow, startCol, -1, -1);
-        diagonalMoves(board, startRow, startCol, -1, 1);
+        PossibleMoves.checkContinuousMoves(board, startPos, 1, 1, possibleMoves);
+        PossibleMoves.checkContinuousMoves(board, startPos, 1, -1, possibleMoves);
+        PossibleMoves.checkContinuousMoves(board, startPos, -1, 1, possibleMoves);
+        PossibleMoves.checkContinuousMoves(board, startPos, -1, -1, possibleMoves);
         return possibleMoves;
     }
 
-    public boolean inBounds(ChessPosition position) {
-        //Check to make sure you're not off the board
-        int row = position.getRow();
-        int col = position.getColumn();
-        if (row > 8 || row < 1 || col > 8 || col < 1) {
-            return false;
-        }
-        return true;
-    }
-
-    public void diagonalMoves(ChessBoard board, int startRow, int startCol, int rowChange, int colChange) {
-        ChessPosition currPos = startPos;
-        ChessPiece currPiece = board.getPiece(currPos);
-        ChessGame.TeamColor startColor = currPiece.getTeamColor();
-        ChessPosition nextPos = new ChessPosition(startRow + rowChange, startCol + colChange);
-
-        while (inBounds(nextPos)) {
-            currPos = nextPos;
-            nextPos = new ChessPosition(currPos.getRow() + rowChange, currPos.getColumn() + colChange);
-            currPiece = board.getPiece(currPos);
-            if (currPiece == null) {
-                possibleMoves.add(new ChessMove(startPos, currPos, null));
-            }
-            else {
-                if (currPiece.getTeamColor() != startColor) {
-                    possibleMoves.add(new ChessMove(startPos, currPos, null));
-                    break;
-                }
-                else {
-                    break;
-                }
-            }
-        }
-    }
 }
