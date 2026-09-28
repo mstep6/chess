@@ -20,34 +20,26 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
         int startRow = startPos.getRow();
         int startCol = startPos.getColumn();
 
-        if (startRow == 2 && startColor == ChessGame.TeamColor.WHITE) {
-            if (board.getPiece(new ChessPosition(startRow + 1, startCol)) == null) {
-                moveOneSquare(board, startPos, 1, 0);
-                moveOneSquare(board, startPos, 2, 0);
-                captureDiagonal(board, startPos, 1, 1);
-                captureDiagonal(board, startPos, 1, -1);
+        if (startColor == ChessGame.TeamColor.WHITE) {
+            if (startRow == 2) {
+                if (board.getPiece(new ChessPosition(startRow + 1, startCol)) == null) {
+                    moveOneSquare(board, startPos, 2, 0);
+                }
             }
-        }
-        else if (startRow == 7 && startColor == ChessGame.TeamColor.BLACK) {
-            if (board.getPiece(new ChessPosition(startRow - 1, startCol)) == null) {
-                moveOneSquare(board, startPos, -1, 0);
-                moveOneSquare(board, startPos, -2, 0);
-                captureDiagonal(board, startPos, -1, 1);
-                captureDiagonal(board, startPos, -1, -1);
-            }
-        }
-        else if (startColor == ChessGame.TeamColor.WHITE) {
             moveOneSquare(board, startPos, 1, 0);
             captureDiagonal(board, startPos, 1, 1);
             captureDiagonal(board, startPos, 1, -1);
         }
-        else {
+        else if (startColor == ChessGame.TeamColor.BLACK) {
+            if (startRow == 7) {
+                if (board.getPiece(new ChessPosition(startRow - 1, startCol)) == null) {
+                    moveOneSquare(board, startPos, -2, 0);
+                }
+            }
             moveOneSquare(board, startPos, -1, 0);
             captureDiagonal(board, startPos, -1, 1);
             captureDiagonal(board, startPos, -1, -1);
         }
-
-
         return possibleMoves;
     }
 

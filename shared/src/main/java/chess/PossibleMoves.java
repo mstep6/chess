@@ -4,7 +4,8 @@ import java.util.Collection;
 
 public class PossibleMoves {
 
-    public static void checkContinuousMoves(ChessBoard board, ChessPosition startPos, int rowChange, int colChange, Collection<ChessMove> possibleMoves) {
+    public static void checkContinuousMoves(ChessBoard board, ChessPosition startPos,
+                                            int rowChange, int colChange, Collection<ChessMove> possibleMoves) {
         int startRow = startPos.getRow();
         int startCol = startPos.getColumn();
         ChessPiece currPiece = board.getPiece(startPos);
