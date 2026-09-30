@@ -20,10 +20,12 @@ public class ChessBoard {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = other.getPiece(new ChessPosition(i, j));
-                ChessPiece.PieceType currType = piece.getPieceType();
-                ChessGame.TeamColor currColor = piece.getTeamColor();
-                ChessPiece newPiece = new ChessPiece(currColor, currType);
-                other.addPiece(new ChessPosition(i, j), newPiece);
+                if (piece != null) {
+                    ChessPiece.PieceType currType = piece.getPieceType();
+                    ChessGame.TeamColor currColor = piece.getTeamColor();
+                    ChessPiece newPiece = new ChessPiece(currColor, currType);
+                    other.addPiece(new ChessPosition(i, j), newPiece);
+                }
             }
         }
     }
@@ -104,47 +106,47 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        String chessBoard = "";
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j<= 8; j++) {
+        String chessBoard = "|";
+        for (int i = 8; i > 0; i--) {
+            for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = getPiece(new ChessPosition(i, j));
                 if (piece == null) {
-                    chessBoard += " | ";
+                    chessBoard += " |";
                 }
                 else {
                     if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
                         if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
-                            chessBoard += "P| ";
+                            chessBoard += "P|";
                         }
                         else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
-                            chessBoard += "B| ";
+                            chessBoard += "B|";
                         }
                         else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
-                            chessBoard += "Q| ";
+                            chessBoard += "Q|";
                         }
                         else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
-                            chessBoard += "K| ";
+                            chessBoard += "K|";
                         }
                         else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
-                            chessBoard += "R| ";
+                            chessBoard += "R|";
                         }
                         else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
-                            chessBoard += "N| ";
+                            chessBoard += "N|";
                         }
                     }
                     else {
                         if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
-                            chessBoard += "p| ";
+                            chessBoard += "p|";
                         } else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
-                            chessBoard += "b| ";
+                            chessBoard += "b|";
                         } else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
-                            chessBoard += "q| ";
+                            chessBoard += "q|";
                         } else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
-                            chessBoard += "k| ";
+                            chessBoard += "k|";
                         } else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
-                            chessBoard += "r| ";
+                            chessBoard += "r|";
                         } else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
-                            chessBoard += "n| ";
+                            chessBoard += "n|";
                         }
                     }
                 }
