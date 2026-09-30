@@ -15,6 +15,19 @@ public class ChessBoard {
         
     }
 
+    public ChessBoard(ChessBoard other) {
+        this.board = Arrays.copyOf(other.board, other.board.length);
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = other.getPiece(new ChessPosition(i, j));
+                ChessPiece.PieceType currType = piece.getPieceType();
+                ChessGame.TeamColor currColor = piece.getTeamColor();
+                ChessPiece newPiece = new ChessPiece(currColor, currType);
+                other.addPiece(new ChessPosition(i, j), newPiece);
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -69,7 +82,9 @@ public class ChessBoard {
     }
 
     public void setSquareNull(ChessPosition position) {
-        board[position.getRow()][position.getColumn()] = null;
+        ChessPiece piece = getPiece(position);
+        piece = null;
+        addPiece(position, piece);
     }
 
 
@@ -85,5 +100,57 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(board);
+    }
+
+    @Override
+    public String toString() {
+        String chessBoard = "";
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j<= 8; j++) {
+                ChessPiece piece = getPiece(new ChessPosition(i, j));
+                if (piece == null) {
+                    chessBoard += " | ";
+                }
+                else {
+                    if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+                        if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
+                            chessBoard += "P| ";
+                        }
+                        else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
+                            chessBoard += "B| ";
+                        }
+                        else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
+                            chessBoard += "Q| ";
+                        }
+                        else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
+                            chessBoard += "K| ";
+                        }
+                        else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
+                            chessBoard += "R| ";
+                        }
+                        else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
+                            chessBoard += "N| ";
+                        }
+                    }
+                    else {
+                        if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
+                            chessBoard += "p| ";
+                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
+                            chessBoard += "b| ";
+                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
+                            chessBoard += "q| ";
+                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
+                            chessBoard += "k| ";
+                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
+                            chessBoard += "r| ";
+                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
+                            chessBoard += "n| ";
+                        }
+                    }
+                }
+            }
+            chessBoard += "|\n|";
+        }
+        return chessBoard;
     }
 }
