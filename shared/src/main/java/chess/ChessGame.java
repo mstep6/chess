@@ -18,6 +18,7 @@ public class ChessGame {
     public ChessGame() {
         this.teamColor = TeamColor.WHITE;
         this.board = new ChessBoard();
+        board.resetBoard();
     }
 
     /**
@@ -130,7 +131,7 @@ public class ChessGame {
      */
 
     public boolean canCaptureKing(ChessBoard board, TeamColor teamColor) {
-        ChessPosition king = findKing(teamColor);
+        ChessPosition king = findKing(teamColor, board);
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition position = new ChessPosition(i, j);
@@ -190,7 +191,7 @@ public class ChessGame {
         return board;
     }
 
-    public ChessPosition findKing(TeamColor teamColor) {
+    public ChessPosition findKing(TeamColor teamColor, ChessBoard board) {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i, j));
