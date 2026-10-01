@@ -15,8 +15,8 @@ public class ChessBoard {
         
     }
 
+    @SuppressWarnings("CopyConstructorMissesField")
     public ChessBoard(ChessBoard other) {
-        this.board = Arrays.copyOf(other.board, other.board.length);
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = other.getPiece(new ChessPosition(i, j));
@@ -24,7 +24,7 @@ public class ChessBoard {
                     ChessPiece.PieceType currType = piece.getPieceType();
                     ChessGame.TeamColor currColor = piece.getTeamColor();
                     ChessPiece newPiece = new ChessPiece(currColor, currType);
-                    other.addPiece(new ChessPosition(i, j), newPiece);
+                    this.addPiece(new ChessPosition(i, j), newPiece);
                 }
             }
         }
@@ -151,7 +151,7 @@ public class ChessBoard {
                     }
                 }
             }
-            chessBoard += "|\n|";
+            chessBoard += "\n|";
         }
         return chessBoard;
     }
