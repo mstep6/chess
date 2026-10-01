@@ -101,12 +101,22 @@ public class ChessGame {
             throw new InvalidMoveException("No piece at start position");
         }
         else {
+            TeamColor currColor = currPiece.getTeamColor();
+            if (currColor != getTeamTurn()) {
+                throw new InvalidMoveException("It is not your turn");
+            }
             Collection<ChessMove> validMoves = validMoves(startPos);
             if (!validMoves.contains(move)) {
                 throw new InvalidMoveException("Tried to make an invalid move");
             }
             else {
-                board.addPiece(endPos, currPiece);
+                if (move.getPromotionPiece() != null) {
+                    board.addPiece(endPos, new ChessPiece(currColor, move.getPromotionPiece()));
+
+                }
+                else {
+                    board.addPiece(endPos, currPiece);
+                }
                 board.setSquareNull(startPos);
             }
             changeTurns();
@@ -158,7 +168,18 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+                if (piece != null && piece.getTeamColor().equals(teamColor)) {
+                    Collection<ChessMove> validMoves = validMoves(new ChessPosition(i, j));
+                    if (validMoves != null && !validMoves.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -169,8 +190,24 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-        //if it's their turn, king is not in check, but valid moves list is empty, you would be in stalemate
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+        else {
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    ChessPiece piece = board.getPiece(new ChessPosition(i, j));
+                    if (piece != null && piece.getTeamColor().equals(teamColor)) {
+                        Collection<ChessMove> validMoves = validMoves(new ChessPosition(i, j));
+                        if (validMoves != null && !validMoves.isEmpty()) {
+                            return false;
+                        }
+                    }
+
+                }
+            }
+        }
+        return true;
     }
 
     /**
