@@ -37,22 +37,25 @@ public class Server {
     private void registerUser(Context ctx) {
         try {
             var body = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-            if (body == null) {
+            if (body == null || body.username() == null || body.password() == null || body.email() == null) {
                 ctx.status(400);
-                throw new BadRequestException("Not a valid request");
+                throw new BadRequestException("Error: unauthorized");
             }
-            if (body.username() == null || body.password() == null || body.email() == null) {
-                ctx.status(400);
-                throw new BadRequestException("Not a valid request");
-            }
+
             RegisterResult registerResult = userService.register(new RegisterRequest(body.username(), body.password(), body.email()));
             ctx.contentType("application/json");
             ctx.result(new Gson().toJson(registerResult));
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            if (e instanceof AlreadyTakenException) {
+                ctx.status(403);
+            }
+            else if (e instanceof BadRequestException) {
+                ctx.status(400);
+            }
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
         }
-
     }
 
     private void loginUser(Context ctx) {
@@ -60,19 +63,40 @@ public class Server {
             var body = new Gson().fromJson(ctx.body(), LoginRequest.class);
             if (body == null || body.username() == null || body.password() == null) {
                 ctx.status(400);
-                throw new BadRequestException("Not a valid request");
+                throw new BadRequestException("Error: unauthorized");
             }
             LoginResult loginResult = userService.login(new LoginRequest(body.username(), body.password()));
             ctx.contentType("application/json");
             ctx.result(new Gson().toJson(loginResult));
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            if (e instanceof WrongPasswordException || e instanceof UnauthorizedException) {
+                ctx.status(401);
+            }
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
         }
     }
 
-    private void logoutUser(@NotNull Context context) {
-
+    private void logoutUser(@NotNull Context ctx) {
+        try {
+            var header = new Gson().fromJson(ctx.header("authorization:"), LogoutRequest.class);
+            if (header.authToken() == null) {
+                ctx.status(400);
+                throw new BadRequestException("Not a valid request");
+            }
+            else {
+                LogoutResult logoutResult = userService.logout(new LogoutRequest(header.authToken()));
+                ctx.contentType("application/json");
+                ctx.result(new Gson().toJson(logoutResult));
+            }
+//
+        } catch (Exception e) {
+            if (e instanceof UnauthorizedException) {
+                ctx.status(401);
+            }
+            System.out.println(e.getMessage());
+        }
     }
 
     public int run(int desiredPort) {
