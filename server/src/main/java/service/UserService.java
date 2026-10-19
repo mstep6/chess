@@ -5,13 +5,12 @@ import dataaccess.AuthDAOMemory;
 import dataaccess.UserDAO;
 import dataaccess.UserDAOMemory;
 import model.UserData;
-import resultsandrequests.AlreadyTakenException;
-import resultsandrequests.RegisterRequest;
-import resultsandrequests.RegisterResult;
+import resultsandrequests.*;
 
 public class UserService {
     private final UserDAO userDAO = new UserDAOMemory();
     private final AuthDAO authDAO = new AuthDAOMemory();
+
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException {
         String username = registerRequest.username();
         boolean userExists = userDAO.findUser(username);
@@ -26,7 +25,32 @@ public class UserService {
             return new RegisterResult(authData.username(), authData.authToken());
         }
     }
-//    public LoginResult login(LoginRequest loginRequest) {}
+
+    public boolean checkPassword(String username, String password) {
+        if (password.equals(userDAO.getPassword(username))) {
+            return true;
+        }
+        return false;
+    }
+
+    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, WrongPasswordException {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
+        boolean userExists = userDAO.findUser(username);
+        if (!userExists) {
+            throw new UnauthorizedException("error: unauthorized");
+        }
+        else {
+            if (!checkPassword(username, password)) {
+                throw new WrongPasswordException("error: incorrect password");
+            }
+            else {
+                String authToken = authDAO.generateToken();
+                var authData = authDAO.createAuthData(loginRequest.username(), authToken);
+                return new LoginResult(authData.username(), authData.authToken());
+            }
+        }
+    }
 //    public void logout(LogoutRequest logoutRequest) {}
 //}
 }

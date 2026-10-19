@@ -14,6 +14,11 @@ public class UserDAOMemory implements UserDAO{
         return false;
     }
 
+    public String getPassword(String username) {
+        UserData userData = userInfo.get(username);
+        return userData.password();
+    }
+
     public void createUser(UserData userData) {
         userInfo.put(userData.username(), userData);
     }

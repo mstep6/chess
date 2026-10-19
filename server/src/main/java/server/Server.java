@@ -2,13 +2,12 @@ package server;
 
 import com.google.gson.Gson;
 import io.javalin.*;
+import org.eclipse.jetty.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import io.javalin.http.Context;
-import resultsandrequests.BadRequestException;
-import resultsandrequests.RegisterRequest;
-import resultsandrequests.RegisterResult;
+import resultsandrequests.*;
 import service.UserService;
 
 public class Server {
@@ -19,17 +18,18 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 // Register your endpoints and exception handlers here.
                 .delete("/db", this::clearDb)
-                .post("/user", this::registerUser);
-//                .post("/session", Server::loginUser)
-//                .delete("/session", Server::logoutUser)
+                .post("/user", this::registerUser)
+                .post("/session", this::loginUser)
+                .delete("/session", this::logoutUser);
 //                .get("/game", Server::listGames)
 //                .post("/game", Server::createGame)
 //                .put("/game", Server::joinGame);
 
     }
 
+
     private void clearDb(@NotNull Context ctx) {
-        var r = Map.of(); 
+        var r = Map.of();
         var json = new Gson();
         ctx.json(json.toJson(r));
     }
@@ -38,9 +38,11 @@ public class Server {
         try {
             var body = new Gson().fromJson(ctx.body(), RegisterRequest.class);
             if (body == null) {
+                ctx.status(400);
                 throw new BadRequestException("Not a valid request");
             }
             if (body.username() == null || body.password() == null || body.email() == null) {
+                ctx.status(400);
                 throw new BadRequestException("Not a valid request");
             }
             RegisterResult registerResult = userService.register(new RegisterRequest(body.username(), body.password(), body.email()));
@@ -50,6 +52,26 @@ public class Server {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+    }
+
+    private void loginUser(Context ctx) {
+        try {
+            var body = new Gson().fromJson(ctx.body(), LoginRequest.class);
+            if (body == null || body.username() == null || body.password() == null) {
+                ctx.status(400);
+                throw new BadRequestException("Not a valid request");
+            }
+            LoginResult loginResult = userService.login(new LoginRequest(body.username(), body.password()));
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(loginResult));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void logoutUser(@NotNull Context context) {
 
     }
 
