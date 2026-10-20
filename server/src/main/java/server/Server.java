@@ -9,11 +9,13 @@ import java.util.Map;
 import io.javalin.http.Context;
 import resultsandrequests.*;
 import service.DeleteService;
+import service.GameService;
 import service.UserService;
 
 public class Server {
     private final UserService userService = new UserService();
     private final DeleteService deleteService = new DeleteService();
+    private final GameService gameService = new GameService();
     private final Javalin javalin;
 
     public Server() {
@@ -24,7 +26,7 @@ public class Server {
                 .post("/session", this::loginUser)
                 .delete("/session", this::logoutUser)
                 .get("/game", Server::listGames)
-                .post("/game", Server::createGame)
+                .post("/game", this::createGame)
                 .put("/game", Server::joinGame);
 
     }
@@ -32,7 +34,31 @@ public class Server {
     private static void joinGame(@NotNull Context context) {
     }
 
-    private static void createGame(@NotNull Context context) {
+    private void createGame(Context ctx) {
+        try {
+            var authToken = ctx.header("authorization");
+            var body = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+            if (authToken == null) {
+                throw new UnauthorizedException("Error: unauthorized");
+            }
+            if (body == null || body.gameName() == null) {
+                throw new BadRequestException("Error: bad request");
+            }
+            CreateGameResult createGameResult = gameService.createGame(new CreateGameRequest(authToken, body.gameName()));
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(createGameResult));
+
+        } catch (Exception e) {
+            if (e instanceof UnauthorizedException) {
+                ctx.status(401);
+            }
+            else if (e instanceof BadRequestException) {
+                ctx.status(400);
+            }
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+
+        }
     }
 
     private static void listGames(@NotNull Context context) {
@@ -88,7 +114,7 @@ public class Server {
             var authToken = ctx.header("authorization");
             if (authToken == null) {
                 ctx.status(401);
-                throw new BadRequestException("Error: unauthorized");
+                throw new UnauthorizedException("Error: unauthorized");
             }
             else {
                 LogoutResult logoutResult = userService.logout(new LogoutRequest(authToken));
@@ -97,7 +123,7 @@ public class Server {
             }
 
         } catch (Exception e) {
-            if (e instanceof UnauthorizedException || e instanceof BadRequestException) {
+            if (e instanceof UnauthorizedException) {
                 ctx.status(401);
             }
             ctx.contentType("application/json");
@@ -108,6 +134,7 @@ public class Server {
     public void clearDb(Context ctx) {
         userService.clearDatabase();
     }
+
 
     public int run(int desiredPort) {
         javalin.start(desiredPort);
