@@ -5,7 +5,7 @@ import model.UserData;
 import java.util.HashMap;
 
 public class UserDAOMemory implements UserDAO{
-    private final HashMap<String, UserData> userInfo = new HashMap<>();
+    private final static HashMap<String, UserData> userInfo = new HashMap<>();
 
     public boolean findUser(String username) {
         if (userInfo.get(username) != null) {
@@ -21,5 +21,9 @@ public class UserDAOMemory implements UserDAO{
 
     public void createUser(UserData userData) {
         userInfo.put(userData.username(), userData);
+    }
+
+    public void clearUsers() {
+        userInfo.clear();
     }
 }

@@ -6,4 +6,5 @@ public interface UserDAO {
     boolean findUser(String username);
     void createUser(UserData userData);
     String getPassword(String username);
+    void clearUsers();
 }

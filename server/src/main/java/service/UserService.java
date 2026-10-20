@@ -1,21 +1,23 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.AuthDAOMemory;
-import dataaccess.UserDAO;
-import dataaccess.UserDAOMemory;
+import dataaccess.*;
 import model.UserData;
 import resultsandrequests.*;
 
 public class UserService {
     private final UserDAO userDAO = new UserDAOMemory();
     private final AuthDAO authDAO = new AuthDAOMemory();
+    private final GameDAO gameDAO = new GameDAOMemory();
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException {
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException {
         String username = registerRequest.username();
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+            throw new BadRequestException("Error: unauthorized");
+        }
         boolean userExists = userDAO.findUser(username);
         if (userExists) {
             throw new AlreadyTakenException("Error: username already taken");
+
         }
         else {
             UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
@@ -51,6 +53,20 @@ public class UserService {
             }
         }
     }
-//    public void logout(LogoutRequest logoutRequest) {}
-//}
+
+    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+        String authToken = logoutRequest.authToken();
+        if (authToken == null) {
+            throw new UnauthorizedException("error: unauthorized");
+        }
+        authDAO.deleteAuthToken(authToken);
+        return new LogoutResult();
+    }
+
+    public void clearDatabase() {
+        userDAO.clearUsers();
+        authDAO.clearAuthData();
+        gameDAO.clearGameData();
+    }
+
 }

@@ -8,10 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import io.javalin.http.Context;
 import resultsandrequests.*;
+import service.DeleteService;
 import service.UserService;
 
 public class Server {
     private final UserService userService = new UserService();
+    private final DeleteService deleteService = new DeleteService();
     private final Javalin javalin;
 
     public Server() {
@@ -20,19 +22,22 @@ public class Server {
                 .delete("/db", this::clearDb)
                 .post("/user", this::registerUser)
                 .post("/session", this::loginUser)
-                .delete("/session", this::logoutUser);
-//                .get("/game", Server::listGames)
-//                .post("/game", Server::createGame)
-//                .put("/game", Server::joinGame);
+                .delete("/session", this::logoutUser)
+                .get("/game", Server::listGames)
+                .post("/game", Server::createGame)
+                .put("/game", Server::joinGame);
 
     }
 
-
-    private void clearDb(@NotNull Context ctx) {
-        var r = Map.of();
-        var json = new Gson();
-        ctx.json(json.toJson(r));
+    private static void joinGame(@NotNull Context context) {
     }
+
+    private static void createGame(@NotNull Context context) {
+    }
+
+    private static void listGames(@NotNull Context context) {
+    }
+
 
     private void registerUser(Context ctx) {
         try {
@@ -78,25 +83,30 @@ public class Server {
         }
     }
 
-    private void logoutUser(@NotNull Context ctx) {
+    private void logoutUser(Context ctx) {
         try {
-            var header = new Gson().fromJson(ctx.header("authorization:"), LogoutRequest.class);
-            if (header.authToken() == null) {
-                ctx.status(400);
-                throw new BadRequestException("Not a valid request");
+            var authToken = ctx.header("authorization");
+            if (authToken == null) {
+                ctx.status(401);
+                throw new BadRequestException("Error: unauthorized");
             }
             else {
-                LogoutResult logoutResult = userService.logout(new LogoutRequest(header.authToken()));
+                LogoutResult logoutResult = userService.logout(new LogoutRequest(authToken));
                 ctx.contentType("application/json");
                 ctx.result(new Gson().toJson(logoutResult));
             }
-//
+
         } catch (Exception e) {
-            if (e instanceof UnauthorizedException) {
+            if (e instanceof UnauthorizedException || e instanceof BadRequestException) {
                 ctx.status(401);
             }
-            System.out.println(e.getMessage());
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
         }
+    }
+
+    public void clearDb(Context ctx) {
+        userService.clearDatabase();
     }
 
     public int run(int desiredPort) {
