@@ -11,8 +11,9 @@ import java.util.Objects;
  */
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
+
     public ChessBoard() {
-        
+
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
@@ -37,7 +38,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -48,7 +49,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -104,6 +105,41 @@ public class ChessBoard {
         return Arrays.deepHashCode(board);
     }
 
+    public String toStringHelper(ChessPiece piece) {
+        String pieceChar = "";
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
+                pieceChar = "p|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
+                pieceChar = "b|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
+                pieceChar = "q|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
+                pieceChar = "k|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
+                pieceChar = "r|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
+                pieceChar = "n|";
+            }
+        } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE) &&
+                    (piece.getPieceType().equals(ChessPiece.PieceType.PAWN))) {
+                pieceChar = "P|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
+                pieceChar = "B|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
+                pieceChar = "Q|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
+                pieceChar = "K|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
+                pieceChar = "R|";
+            } else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
+                pieceChar = "N|";
+            }
+        }
+        return pieceChar;
+    }
+
     @Override
     public String toString() {
         String chessBoard = "|";
@@ -112,47 +148,13 @@ public class ChessBoard {
                 ChessPiece piece = getPiece(new ChessPosition(i, j));
                 if (piece == null) {
                     chessBoard += " |";
+                } else {
+                    String pieceChar = toStringHelper(piece);
+                    chessBoard += pieceChar;
                 }
-                else {
-                    if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
-                        if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
-                            chessBoard += "P|";
-                        }
-                        else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
-                            chessBoard += "B|";
-                        }
-                        else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
-                            chessBoard += "Q|";
-                        }
-                        else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
-                            chessBoard += "K|";
-                        }
-                        else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
-                            chessBoard += "R|";
-                        }
-                        else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
-                            chessBoard += "N|";
-                        }
-                    }
-                    else {
-                        if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
-                            chessBoard += "p|";
-                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.BISHOP)) {
-                            chessBoard += "b|";
-                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.QUEEN)) {
-                            chessBoard += "q|";
-                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
-                            chessBoard += "k|";
-                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.ROOK)) {
-                            chessBoard += "r|";
-                        } else if (piece.getPieceType().equals(ChessPiece.PieceType.KNIGHT)) {
-                            chessBoard += "n|";
-                        }
-                    }
-                }
+                chessBoard += "\n|";
             }
-            chessBoard += "\n|";
         }
         return chessBoard;
+        }
     }
-}
