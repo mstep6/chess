@@ -8,13 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import io.javalin.http.Context;
 import resultsandrequests.*;
-import service.DeleteService;
 import service.GameService;
 import service.UserService;
 
 public class Server {
     private final UserService userService = new UserService();
-    private final DeleteService deleteService = new DeleteService();
     private final GameService gameService = new GameService();
     private final Javalin javalin;
 
