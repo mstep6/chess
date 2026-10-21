@@ -25,13 +25,38 @@ public class Server {
                 .post("/user", this::registerUser)
                 .post("/session", this::loginUser)
                 .delete("/session", this::logoutUser)
-                .get("/game", Server::listGames)
+                .get("/game", this::listGames)
                 .post("/game", this::createGame)
-                .put("/game", Server::joinGame);
-
+                .put("/game", this::joinGame);
     }
 
-    private static void joinGame(@NotNull Context context) {
+    private void joinGame(Context ctx) {
+        try {
+            var authToken = ctx.header("authorization");
+            var body = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+            if (authToken == null) {
+                throw new UnauthorizedException("Error: unauthorized");
+            }
+            if (body == null || body.playerColor() == null || body.gameID() == null) {
+                throw new BadRequestException("Error: bad request");
+            }
+            JoinGameResult joinGameResult = gameService.joinGame(new JoinGameRequest(authToken, body.playerColor(), body.gameID()));
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(joinGameResult));
+        }
+        catch (Exception e) {
+            if (e instanceof BadRequestException) {
+                ctx.status(400);
+            }
+            if (e instanceof UnauthorizedException) {
+                ctx.status(401);
+            }
+            else if (e instanceof GameDoesNotExistException || e instanceof AlreadyTakenException) {
+                ctx.status(403);
+            }
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+        }
     }
 
     private void createGame(Context ctx) {
@@ -61,7 +86,25 @@ public class Server {
         }
     }
 
-    private static void listGames(@NotNull Context context) {
+    private void listGames(Context ctx) {
+        try {
+            var authToken = ctx.header("authorization");
+            if (authToken == null) {
+                ctx.status(401);
+                throw new UnauthorizedException("Error: unauthorized");
+            }
+            else {
+                ListGamesResult listGamesResult = gameService.listAllGames(authToken);
+                ctx.contentType("application/json");
+                ctx.result(new Gson().toJson(listGamesResult));
+            }
+        } catch (Exception e) {
+            if (e instanceof UnauthorizedException) {
+                ctx.status(401);
+            }
+            ctx.contentType("application/json");
+            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+        }
     }
 
 
@@ -72,7 +115,6 @@ public class Server {
                 ctx.status(400);
                 throw new BadRequestException("Error: unauthorized");
             }
-
             RegisterResult registerResult = userService.register(new RegisterRequest(body.username(), body.password(), body.email()));
             ctx.contentType("application/json");
             ctx.result(new Gson().toJson(registerResult));
@@ -121,8 +163,8 @@ public class Server {
                 ctx.contentType("application/json");
                 ctx.result(new Gson().toJson(logoutResult));
             }
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             if (e instanceof UnauthorizedException) {
                 ctx.status(401);
             }
