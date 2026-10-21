@@ -1,6 +1,10 @@
 package service;
 
 import dataaccess.*;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.UnauthorizedException;
+import exceptions.WrongPasswordException;
 import model.UserData;
 import resultsandrequests.*;
 

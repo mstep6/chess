@@ -1,4 +1,4 @@
-package resultsandrequests;
+package exceptions;
 
 public class GameDoesNotExistException extends Exception {
     public GameDoesNotExistException(String message) {

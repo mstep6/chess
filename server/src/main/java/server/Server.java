@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import exceptions.*;
 import io.javalin.*;
 import java.util.Map;
 import io.javalin.http.Context;

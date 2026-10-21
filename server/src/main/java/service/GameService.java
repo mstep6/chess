@@ -2,6 +2,10 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.GameDoesNotExistException;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import resultsandrequests.*;

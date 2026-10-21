@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import exceptions.*;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,8 @@ class GameServiceTest {
         RegisterResult registerResult = userService.register(new RegisterRequest("user", "monkey", "email"));
         CreateGameRequest createGameRequest = new CreateGameRequest(registerResult.authToken(), "game");
         CreateGameResult createGameResult = gameService.createGame(createGameRequest);
-        JoinGameResult joinGameResult = gameService.joinGame(new JoinGameRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID()));
+        JoinGameResult joinGameResult = gameService.joinGame(
+                new JoinGameRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID()));
         JoinGameResult expectedResult = new JoinGameResult();
         Assertions.assertEquals(expectedResult, joinGameResult);
 
