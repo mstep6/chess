@@ -7,18 +7,18 @@ import java.util.ArrayList;
 
 
 public class GameDAOMemory implements GameDAO {
-    private final static ArrayList<GameData> gameInfo = new ArrayList<>();
+    private final static ArrayList<GameData> GAME_INFO = new ArrayList<>();
 
     public void createGame(GameData gameData) {
         int gameID = gameData.gameID();
-        gameInfo.add(gameData);
+        GAME_INFO.add(gameData);
     }
     public void clearGameData() {
-        gameInfo.clear();
+        GAME_INFO.clear();
     }
 
     public GameData findGame(Integer gameID) {
-        for (var game : gameInfo) {
+        for (var game : GAME_INFO) {
             if (game.gameID() == gameID) {
                 return game;
             }
@@ -27,7 +27,7 @@ public class GameDAOMemory implements GameDAO {
     }
 
     public ArrayList<GameData> getGames() {
-        return gameInfo;
+        return GAME_INFO;
     }
 
     public void updatePlayers(String username, JoinGameRequest joinGameRequest, GameData gameData) {
@@ -38,13 +38,13 @@ public class GameDAOMemory implements GameDAO {
         ChessGame chessGame = gameData.game();
 
         int index = 0;
-        for (var game : gameInfo) {
+        for (var game : GAME_INFO) {
             if (game == gameData) {
                 if (joinGameRequest.playerColor().equals(ChessGame.TeamColor.WHITE)) {
-                    gameInfo.set(index, new GameData(gameID, username, blackUsername, gameName, chessGame));
+                    GAME_INFO.set(index, new GameData(gameID, username, blackUsername, gameName, chessGame));
                 }
                 else if (joinGameRequest.playerColor().equals(ChessGame.TeamColor.BLACK)) {
-                    gameInfo.set(index, new GameData(gameID, whiteUsername, username, gameName, chessGame));
+                    GAME_INFO.set(index, new GameData(gameID, whiteUsername, username, gameName, chessGame));
                 }
             }
             index += 1;

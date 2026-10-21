@@ -25,13 +25,13 @@ class UserServiceTest {
     }
 
     @Test
-    void RegisterBadRequest() {
+    void registerBadRequest() {
         RegisterRequest request = new RegisterRequest(null, "password", "email");
         Assertions.assertThrows(BadRequestException.class, () -> userService.register(request));
     }
 
     @Test
-    void RegisterAlreadyTaken() throws BadRequestException, AlreadyTakenException {
+    void registerAlreadyTaken() throws BadRequestException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUsername", "1234", "email@gmail.com"));
         RegisterRequest newRequest = new RegisterRequest("myUsername", "5678", "m@gmail.com");
         Assertions.assertThrows(AlreadyTakenException.class, () -> userService.register(newRequest));

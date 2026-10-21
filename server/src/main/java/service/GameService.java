@@ -46,7 +46,8 @@ public class GameService {
         return canJoinGame;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws BadRequestException, GameDoesNotExistException, AlreadyTakenException, UnauthorizedException {
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest)
+            throws BadRequestException, GameDoesNotExistException, AlreadyTakenException, UnauthorizedException {
         if (joinGameRequest.gameID() == null || joinGameRequest.playerColor() == null) {
             throw new BadRequestException("Error: bad request");
         }

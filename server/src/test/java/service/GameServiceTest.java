@@ -42,7 +42,8 @@ class GameServiceTest {
     }
 
     @Test
-    void joinGame() throws BadRequestException, AlreadyTakenException, UnauthorizedException, GameDoesNotExistException {
+    void joinGame()
+            throws BadRequestException, AlreadyTakenException, UnauthorizedException, GameDoesNotExistException {
         RegisterResult registerResult = userService.register(new RegisterRequest("user", "monkey", "email"));
         CreateGameRequest createGameRequest = new CreateGameRequest(registerResult.authToken(), "game");
         CreateGameResult createGameResult = gameService.createGame(createGameRequest);

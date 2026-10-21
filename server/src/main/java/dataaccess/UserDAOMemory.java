@@ -5,25 +5,25 @@ import model.UserData;
 import java.util.HashMap;
 
 public class UserDAOMemory implements UserDAO{
-    private final static HashMap<String, UserData> userInfo = new HashMap<>();
+    private final static HashMap<String, UserData> USER_INFO = new HashMap<>();
 
     public boolean findUser(String username) {
-        if (userInfo.get(username) != null) {
+        if (USER_INFO.get(username) != null) {
             return true;
         }
         return false;
     }
 
     public String getPassword(String username) {
-        UserData userData = userInfo.get(username);
+        UserData userData = USER_INFO.get(username);
         return userData.password();
     }
 
     public void createUser(UserData userData) {
-        userInfo.put(userData.username(), userData);
+        USER_INFO.put(userData.username(), userData);
     }
 
     public void clearUsers() {
-        userInfo.clear();
+        USER_INFO.clear();
     }
 }
