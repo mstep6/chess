@@ -17,7 +17,6 @@ public class UserService {
         boolean userExists = userDAO.findUser(username);
         if (userExists) {
             throw new AlreadyTakenException("Error: username already taken");
-
         }
         else {
             UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
@@ -56,7 +55,7 @@ public class UserService {
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
         String authToken = logoutRequest.authToken();
-        if (authToken == null) {
+        if (!authDAO.authTokenExists(authToken)) {
             throw new UnauthorizedException("error: unauthorized");
         }
         authDAO.deleteAuthToken(authToken);

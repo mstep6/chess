@@ -26,4 +26,16 @@ public class AuthDAOMemory implements AuthDAO{
     public void clearAuthData() {
         authInfo.clear();
     }
+
+
+    public AuthData findUser(String authToken) {
+        return authInfo.get(authToken);
+    }
+
+    public boolean authTokenExists(String authToken) {
+        if (authInfo.containsKey(authToken)) {
+            return true;
+        }
+        return false;
+    }
 }
