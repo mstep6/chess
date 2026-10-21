@@ -94,7 +94,7 @@ public class Server {
                 throw new UnauthorizedException("Error: unauthorized");
             }
             else {
-                ListGamesResult listGamesResult = gameService.listAllGames(authToken);
+                ListGamesResult listGamesResult = gameService.listAllGames(new ListGamesRequest(authToken));
                 ctx.contentType("application/json");
                 ctx.result(new Gson().toJson(listGamesResult));
             }

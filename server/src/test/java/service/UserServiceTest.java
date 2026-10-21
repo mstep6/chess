@@ -61,10 +61,11 @@ class UserServiceTest {
     }
 
     @Test
-    void userDoesntExistLogin() {
+    void userDoesNotExistLogin() {
         LoginRequest loginRequest = new LoginRequest("username", "password");
         Assertions.assertThrows(UnauthorizedException.class, () -> userService.login(loginRequest));
     }
+
 
     @Test
     void logout() {
