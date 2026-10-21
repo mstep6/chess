@@ -56,8 +56,8 @@ class GameServiceTest {
         Assertions.assertEquals(expectedResult, joinGameResult);
 
         ListGamesResult listGamesResult = gameService.listAllGames(new ListGamesRequest(registerResult.authToken()));
-        ArrayList<Map<Integer, GameData>> expectedList = new ArrayList<>();
-        expectedList.add(Map.of(1, new GameData(1, "user", null, createGameRequest.gameName(), new ChessGame())));
+        ArrayList<GameData> expectedList = new ArrayList<>();
+        expectedList.add(new GameData(1, "user", null, createGameRequest.gameName(), new ChessGame()));
         ListGamesResult expectedListResult = new ListGamesResult(expectedList);
         Assertions.assertEquals(expectedListResult, listGamesResult);
     }
@@ -70,9 +70,9 @@ class GameServiceTest {
         gameService.createGame(game1);
         gameService.createGame(game2);
         ListGamesResult listGamesResult = gameService.listAllGames(new ListGamesRequest(registerResult.authToken()));
-        ArrayList<Map<Integer, GameData>> expectedList = new ArrayList<>();
-        expectedList.add(Map.of(1, new GameData(1, null, null, "game1", new ChessGame())));
-        expectedList.add(Map.of(2, new GameData(2, null, null, "game2", new ChessGame())));
+        ArrayList<GameData> expectedList = new ArrayList<>();
+        expectedList.add( new GameData(1, null, null, "game1", new ChessGame()));
+        expectedList.add(new GameData(2, null, null, "game2", new ChessGame()));
         ListGamesResult expectedResult = new ListGamesResult(expectedList);
         Assertions.assertEquals(expectedResult, listGamesResult);
         Assertions.assertEquals(2, listGamesResult.games().size());

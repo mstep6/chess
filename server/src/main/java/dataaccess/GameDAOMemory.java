@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 public class GameDAOMemory implements GameDAO {
-    private final static ArrayList<Map<Integer, GameData>> gameInfo = new ArrayList<>();
+    private final static ArrayList<GameData> gameInfo = new ArrayList<>();
 
     public void createGame(GameData gameData) {
         int gameID = gameData.gameID();
-        gameInfo.add(Map.of(gameID, gameData));
+        gameInfo.add(gameData);
     }
     public void clearGameData() {
         gameInfo.clear();
@@ -25,14 +25,14 @@ public class GameDAOMemory implements GameDAO {
 
     public GameData findGame(Integer gameID) {
         for (var game : gameInfo) {
-            if (game.containsKey(gameID)) {
-                return game.get(gameID);
+            if (game.gameID() == gameID) {
+                return game;
             }
         }
         return null;
     }
 
-    public ArrayList<Map<Integer, GameData>> getGames() {
+    public ArrayList<GameData> getGames() {
         return gameInfo;
     }
 
@@ -41,16 +41,16 @@ public class GameDAOMemory implements GameDAO {
         String whiteUsername = gameData.whiteUsername();
         String blackUsername = gameData.blackUsername();
         String gameName = gameData.gameName();
-        ChessGame game = gameData.game();
+        ChessGame chessGame = gameData.game();
 
         int index = 0;
-        for (var gameMap : gameInfo) {
-            if (gameMap.containsKey(gameID)) {
+        for (var game : gameInfo) {
+            if (game == gameData) {
                 if (joinGameRequest.playerColor().equals(ChessGame.TeamColor.WHITE)) {
-                    gameInfo.set(index, Map.of(gameID, new GameData(gameID, username, blackUsername, gameName, game)));
+                    gameInfo.set(index, new GameData(gameID, username, blackUsername, gameName, chessGame));
                 }
                 else if (joinGameRequest.playerColor().equals(ChessGame.TeamColor.BLACK)) {
-                    gameInfo.set(index, Map.of(gameID, new GameData(gameID, whiteUsername, username, gameName, game)));
+                    gameInfo.set(index, new GameData(gameID, whiteUsername, username, gameName, chessGame));
                 }
             }
             index += 1;

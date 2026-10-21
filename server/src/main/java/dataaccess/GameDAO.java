@@ -10,6 +10,6 @@ public interface GameDAO {
     void clearGameData();
     void createGame(GameData gameData);
     GameData findGame(Integer gameID);
-    ArrayList<Map<Integer, GameData>> getGames();
+    ArrayList<GameData> getGames();
     void updatePlayers(String username, JoinGameRequest joinGameRequest, GameData gameData);
 }

@@ -80,7 +80,7 @@ public class GameService {
         if (!authDAO.authTokenExists(listGamesRequest.authToken())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        ArrayList<Map<Integer, GameData>> gameList = gameDAO.getGames();
+        ArrayList<GameData> gameList = gameDAO.getGames();
         return new ListGamesResult(gameList);
     }
 
