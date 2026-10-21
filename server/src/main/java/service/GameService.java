@@ -4,13 +4,8 @@ import chess.ChessGame;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 import resultsandrequests.*;
-
 import java.util.ArrayList;
-import java.util.Map;
-
-import static chess.ChessGame.TeamColor.WHITE;
 
 public class GameService {
     private final UserDAO userDAO = new UserDAOMemory();

@@ -1,16 +1,10 @@
 package dataaccess;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
-import model.UserData;
-import resultsandrequests.GameDoesNotExistException;
 import resultsandrequests.JoinGameRequest;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 public class GameDAOMemory implements GameDAO {
     private final static ArrayList<GameData> gameInfo = new ArrayList<>();
