@@ -182,6 +182,20 @@ public class ChessGame {
         return true;
     }
 
+    //Given a position, finds the piece and looks at its valid moves
+    //if there's a valid move it can make that won't put it in check, returns false
+    //otherwise returns true that there are no possible valid moves.
+    public boolean noPossibleValidMoves(ChessPosition position, TeamColor teamColor) {
+        ChessPiece piece = board.getPiece(position);
+        if (piece != null && piece.getTeamColor().equals(teamColor)) {
+            Collection<ChessMove> validMoves = validMoves(position);
+            if (validMoves != null && !validMoves.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves while not in check.
@@ -196,13 +210,10 @@ public class ChessGame {
         else {
             for (int i = 1; i <= 8; i++) {
                 for (int j = 1; j <= 8; j++) {
-                    ChessPiece piece = board.getPiece(new ChessPosition(i, j));
-                    if (piece != null && piece.getTeamColor().equals(teamColor)) {
-                        Collection<ChessMove> validMoves = validMoves(new ChessPosition(i, j));
-                        if (validMoves != null && !validMoves.isEmpty()) {
-                            return false;
-                        }
+                    if (!noPossibleValidMoves(new ChessPosition(i, j), teamColor)) {
+                        return false;
                     }
+
                 }
             }
         }
