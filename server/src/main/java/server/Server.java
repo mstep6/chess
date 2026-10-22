@@ -26,6 +26,15 @@ public class Server {
                 .put("/game", this::joinGame);
     }
 
+    private void setStatus(int status, Context ctx) {
+        ctx.status(status);
+    }
+
+    private void convertErrorToJson(Context ctx, Exception e) {
+        ctx.contentType("application/json");
+        ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+    }
+
     private void joinGame(Context ctx) {
         try {
             var authToken = ctx.header("authorization");
@@ -42,16 +51,15 @@ public class Server {
         }
         catch (Exception e) {
             if (e instanceof BadRequestException) {
-                ctx.status(400);
+                setStatus(400, ctx);
             }
             if (e instanceof UnauthorizedException) {
-                ctx.status(401);
+                setStatus(401, ctx);
             }
             else if (e instanceof GameDoesNotExistException || e instanceof AlreadyTakenException) {
-                ctx.status(403);
+                setStatus(403, ctx);
             }
-            ctx.contentType("application/json");
-            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+            convertErrorToJson(ctx, e);
         }
     }
 
@@ -71,14 +79,12 @@ public class Server {
 
         } catch (Exception e) {
             if (e instanceof UnauthorizedException) {
-                ctx.status(401);
+                setStatus(401, ctx);
             }
             else if (e instanceof BadRequestException) {
-                ctx.status(400);
+                setStatus(400, ctx);
             }
-            ctx.contentType("application/json");
-            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
-
+            convertErrorToJson(ctx, e);
         }
     }
 
@@ -86,7 +92,7 @@ public class Server {
         try {
             var authToken = ctx.header("authorization");
             if (authToken == null) {
-                ctx.status(401);
+                setStatus(401, ctx);
                 throw new UnauthorizedException("Error: unauthorized");
             }
             else {
@@ -96,10 +102,9 @@ public class Server {
             }
         } catch (Exception e) {
             if (e instanceof UnauthorizedException) {
-                ctx.status(401);
+                setStatus(401, ctx);
             }
-            ctx.contentType("application/json");
-            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+            convertErrorToJson(ctx, e);
         }
     }
 
@@ -108,7 +113,7 @@ public class Server {
         try {
             var body = new Gson().fromJson(ctx.body(), RegisterRequest.class);
             if (body == null || body.username() == null || body.password() == null || body.email() == null) {
-                ctx.status(400);
+                setStatus(400, ctx);
                 throw new BadRequestException("Error: unauthorized");
             }
             RegisterResult registerResult = userService.register(new RegisterRequest(body.username(), body.password(), body.email()));
@@ -117,13 +122,12 @@ public class Server {
         }
         catch (Exception e) {
             if (e instanceof AlreadyTakenException) {
-                ctx.status(403);
+                setStatus(403, ctx);
             }
             else if (e instanceof BadRequestException) {
-                ctx.status(400);
+                setStatus(400, ctx);
             }
-            ctx.contentType("application/json");
-            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+            convertErrorToJson(ctx, e);
         }
     }
 
@@ -131,7 +135,7 @@ public class Server {
         try {
             var body = new Gson().fromJson(ctx.body(), LoginRequest.class);
             if (body == null || body.username() == null || body.password() == null) {
-                ctx.status(400);
+                setStatus(400, ctx);
                 throw new BadRequestException("Error: unauthorized");
             }
             LoginResult loginResult = userService.login(new LoginRequest(body.username(), body.password()));
@@ -140,10 +144,9 @@ public class Server {
         }
         catch (Exception e) {
             if (e instanceof WrongPasswordException || e instanceof UnauthorizedException) {
-                ctx.status(401);
+                setStatus(401, ctx);
             }
-            ctx.contentType("application/json");
-            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+            convertErrorToJson(ctx, e);
         }
     }
 
@@ -151,7 +154,7 @@ public class Server {
         try {
             var authToken = ctx.header("authorization");
             if (authToken == null) {
-                ctx.status(401);
+                setStatus(401, ctx);
                 throw new UnauthorizedException("Error: unauthorized");
             }
             else {
@@ -162,10 +165,9 @@ public class Server {
         }
         catch (Exception e) {
             if (e instanceof UnauthorizedException) {
-                ctx.status(401);
+                setStatus(401, ctx);
             }
-            ctx.contentType("application/json");
-            ctx.result(new Gson().toJson(Map.of("message", e.getMessage())));
+            convertErrorToJson(ctx, e);
         }
     }
 
