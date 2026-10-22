@@ -72,7 +72,18 @@ class UserServiceTest {
 
 
     @Test
-    void logout() {
+    void logout() throws BadRequestException, AlreadyTakenException, UnauthorizedException, WrongPasswordException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("usrnme", "pswrd", "email"));
+        LoginResult loginResult = userService.login(new LoginRequest("usrnme", "pswrd"));
+        LogoutResult logoutResult = userService.logout(new LogoutRequest(loginResult.authToken()));
+        LogoutResult expectedResult = new LogoutResult();
+        Assertions.assertEquals(expectedResult, logoutResult);
+    }
 
+    @Test
+    void logoutInvalidAuthToken() throws BadRequestException, AlreadyTakenException, UnauthorizedException, WrongPasswordException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("usrnme", "pswrd", "email"));
+        LoginResult loginResult = userService.login(new LoginRequest("usrnme", "pswrd"));
+        Assertions.assertThrows(UnauthorizedException.class, () -> userService.logout(new LogoutRequest("abc")));
     }
 }
