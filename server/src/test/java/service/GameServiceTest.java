@@ -28,6 +28,12 @@ class GameServiceTest {
     }
 
     @Test
+    void createGameInvalidAuthToken() throws BadRequestException, AlreadyTakenException, UnauthorizedException {
+        CreateGameRequest game = new CreateGameRequest("authToken", "myGame");
+        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.createGame(game));
+    }
+
+    @Test
     void createGameNullAuthToken() throws BadRequestException, UnauthorizedException {
         CreateGameRequest game = new CreateGameRequest(null, "game1");
         Assertions.assertThrows(UnauthorizedException.class, () -> gameService.createGame(game));
@@ -41,6 +47,18 @@ class GameServiceTest {
 
     @Test
     void checkPlayerColor() {
+        GameData gameData = new GameData(1, null, null, "myGame", new ChessGame());
+        JoinGameRequest joinGameRequest = new JoinGameRequest("abc", ChessGame.TeamColor.WHITE, 1);
+        boolean canJoinGame = gameService.checkPlayerColor(joinGameRequest, gameData);
+        Assertions.assertTrue(canJoinGame);
+    }
+
+    @Test
+    void checkPlayerColorCanNotJoin() {
+        GameData gameData = new GameData(1, "whiteUsername", null, "myGame", new ChessGame());
+        JoinGameRequest joinGameRequest = new JoinGameRequest("abc", ChessGame.TeamColor.WHITE, 1);
+        boolean canJoinGame = gameService.checkPlayerColor(joinGameRequest, gameData);
+        Assertions.assertFalse(canJoinGame);
     }
 
     @Test
