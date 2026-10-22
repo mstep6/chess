@@ -67,10 +67,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
             ChessPiece nextPiece = board.getPiece(nextPos);
             if (canPromote(board, startPos)) {
                 if (nextPiece != null && nextPiece.getTeamColor() != startColor) {
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.QUEEN));
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.ROOK));
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.BISHOP));
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.KNIGHT));
+                    addPromotionPieces(startPos, nextPos);
                 }
             }
             else {
@@ -79,6 +76,13 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
                 }
             }
         }
+    }
+
+    public void addPromotionPieces(ChessPosition startPos, ChessPosition nextPos) {
+        possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.QUEEN));
+        possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.ROOK));
+        possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.BISHOP));
+        possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.KNIGHT));
     }
 
     void moveOneSquare(ChessBoard board, ChessPosition startPos, int rowChange, int colChange) {
@@ -90,10 +94,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
             ChessPiece nextPiece = board.getPiece(nextPos);
             if (canPromote(board, startPos)) {
                 if (nextPiece == null) {
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.QUEEN));
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.ROOK));
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.BISHOP));
-                    possibleMoves.add(new ChessMove(startPos, nextPos, ChessPiece.PieceType.KNIGHT));
+                    addPromotionPieces(startPos, nextPos);
                 }
             }
             else {
