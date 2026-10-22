@@ -20,8 +20,9 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame() throws BadRequestException, UnauthorizedException {
-        CreateGameRequest game = new CreateGameRequest("abc", "game1");
+    void createGame() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("username", "pswrd", "email"));
+        CreateGameRequest game = new CreateGameRequest(registerResult.authToken(), "game1");
         CreateGameResult gameResult = gameService.createGame(game);
         Assertions.assertEquals(1, gameResult.gameID());
     }
