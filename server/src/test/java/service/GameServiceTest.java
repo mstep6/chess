@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import exceptions.*;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
@@ -15,12 +16,12 @@ class GameServiceTest {
 
 
     @BeforeEach
-    void clearData() {
+    void clearData() throws DataAccessException {
         userService.clearDatabase();
     }
 
     @Test
-    void createGame() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+    void createGame() throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         RegisterResult registerResult = userService.register(new RegisterRequest("username", "pswrd", "email"));
         CreateGameRequest game = new CreateGameRequest(registerResult.authToken(), "game1");
         CreateGameResult gameResult = gameService.createGame(game);
@@ -63,7 +64,7 @@ class GameServiceTest {
 
     @Test
     void joinGame()
-            throws BadRequestException, AlreadyTakenException, UnauthorizedException, GameDoesNotExistException {
+            throws BadRequestException, AlreadyTakenException, UnauthorizedException, GameDoesNotExistException, DataAccessException {
         RegisterResult registerResult = userService.register(new RegisterRequest("user", "monkey", "email"));
         CreateGameRequest createGameRequest = new CreateGameRequest(registerResult.authToken(), "game");
         CreateGameResult createGameResult = gameService.createGame(createGameRequest);
@@ -80,7 +81,7 @@ class GameServiceTest {
     }
 
     @Test
-    void listAllGames() throws BadRequestException, UnauthorizedException, WrongPasswordException, AlreadyTakenException {
+    void listAllGames() throws BadRequestException, UnauthorizedException, WrongPasswordException, AlreadyTakenException, DataAccessException {
         RegisterResult registerResult = userService.register(new RegisterRequest("usr", "pswrd", "email"));
         CreateGameRequest game1 = new CreateGameRequest(registerResult.authToken(), "game1");
         CreateGameRequest game2 = new CreateGameRequest(registerResult.authToken(), "game2");

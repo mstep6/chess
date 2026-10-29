@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.UserDAODatabase;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
@@ -13,7 +14,16 @@ public class UserService {
     private final AuthDAO authDAO = new AuthDAOMemory();
     private final GameDAO gameDAO = new GameDAOMemory();
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException {
+    public UserService () {
+        try {
+            UserDAO jsdkljkl = new UserDAODatabase();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException();
+        }
+    }
+
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, BadRequestException, DataAccessException {
         String username = registerRequest.username();
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             throw new BadRequestException("Error: unauthorized");
@@ -31,14 +41,14 @@ public class UserService {
         }
     }
 
-    public boolean checkPassword(String username, String password) {
+    public boolean checkPassword(String username, String password) throws DataAccessException {
         if (password.equals(userDAO.getPassword(username))) {
             return true;
         }
         return false;
     }
 
-    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, WrongPasswordException {
+    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, WrongPasswordException, DataAccessException {
         String username = loginRequest.username();
         String password = loginRequest.password();
         boolean userExists = userDAO.findUser(username);
@@ -66,7 +76,7 @@ public class UserService {
         return new LogoutResult();
     }
 
-    public void clearDatabase() {
+    public void clearDatabase() throws DataAccessException {
         userDAO.clearUsers();
         authDAO.clearAuthData();
         gameDAO.clearGameData();

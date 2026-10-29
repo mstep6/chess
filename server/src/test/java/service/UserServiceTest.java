@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
@@ -13,12 +14,12 @@ class UserServiceTest {
     UserService userService = new UserService();
 
     @BeforeEach
-    void clearData() {
+    void clearData() throws DataAccessException {
         userService.clearDatabase();
     }
 
     @Test
-    void register() throws AlreadyTakenException, BadRequestException {
+    void register() throws AlreadyTakenException, BadRequestException, DataAccessException {
         String username = "myUsername";
         String password = "myPassword";
         String email = "myEmail@gmail.com";
@@ -35,26 +36,26 @@ class UserServiceTest {
     }
 
     @Test
-    void registerAlreadyTaken() throws BadRequestException, AlreadyTakenException {
+    void registerAlreadyTaken() throws BadRequestException, AlreadyTakenException, DataAccessException {
         userService.register(new RegisterRequest("myUsername", "1234", "email@gmail.com"));
         RegisterRequest newRequest = new RegisterRequest("myUsername", "5678", "m@gmail.com");
         Assertions.assertThrows(AlreadyTakenException.class, () -> userService.register(newRequest));
     }
 
     @Test
-    void checkPassword() throws BadRequestException, AlreadyTakenException {
+    void checkPassword() throws BadRequestException, AlreadyTakenException, DataAccessException {
         userService.register(new RegisterRequest("username", "password", "email@byu.edu"));
         Assertions.assertTrue(userService.checkPassword("username", "password"));
     }
 
     @Test
-    void wrongPassword() throws BadRequestException, AlreadyTakenException {
+    void wrongPassword() throws BadRequestException, AlreadyTakenException, DataAccessException {
         userService.register(new RegisterRequest("username", "password", "email@byu.edu"));
         Assertions.assertFalse(userService.checkPassword("username", "passwrd"));
     }
 
     @Test
-    void login() throws UnauthorizedException, WrongPasswordException, BadRequestException, AlreadyTakenException {
+    void login() throws UnauthorizedException, WrongPasswordException, BadRequestException, AlreadyTakenException, DataAccessException {
         String username = "test123";
         String password = "passwordTest456";
         userService.register(new RegisterRequest(username, password, "email"));
@@ -72,7 +73,7 @@ class UserServiceTest {
 
 
     @Test
-    void logout() throws BadRequestException, AlreadyTakenException, UnauthorizedException, WrongPasswordException {
+    void logout() throws BadRequestException, AlreadyTakenException, UnauthorizedException, WrongPasswordException, DataAccessException {
         RegisterResult registerResult = userService.register(new RegisterRequest("usrnme", "pswrd", "email"));
         LoginResult loginResult = userService.login(new LoginRequest("usrnme", "pswrd"));
         LogoutResult logoutResult = userService.logout(new LogoutRequest(loginResult.authToken()));
@@ -81,7 +82,7 @@ class UserServiceTest {
     }
 
     @Test
-    void logoutInvalidAuthToken() throws BadRequestException, AlreadyTakenException, UnauthorizedException, WrongPasswordException {
+    void logoutInvalidAuthToken() throws BadRequestException, AlreadyTakenException, UnauthorizedException, WrongPasswordException, DataAccessException {
         RegisterResult registerResult = userService.register(new RegisterRequest("usrnme", "pswrd", "email"));
         LoginResult loginResult = userService.login(new LoginRequest("usrnme", "pswrd"));
         Assertions.assertThrows(UnauthorizedException.class, () -> userService.logout(new LogoutRequest("abc")));

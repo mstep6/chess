@@ -1,51 +1,86 @@
 package dataaccess;
 
-import com.google.gson.Gson;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static dataaccess.DatabaseManager.createDatabase;
+import static dataaccess.DatabaseManager.getConnection;
+
 public class UserDAODatabase implements UserDAO {
     public UserDAODatabase() throws SQLException, DataAccessException {
-        configureDatabase();
+        createDatabase();
     }
-    boolean findUser(String username) {
-
-    }
-    void createUser(UserData userData) {
-        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-
-    }
-    String getPassword(String username) {
-
-    }
-    void clearUsers() {
-        var statement = "DROP TABLE users";
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS users (
-            username varchar(256) NOT NULL,
-            password varchar(256) NOT NULL,
-            email varchar(256) NOT NULL,
-            PRIMARY KEY (username),
-            INDEX(password)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-"""
-    };
-
-    private void configureDatabase() throws DataAccessException, SQLException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
+    public boolean findUser(String username) throws DataAccessException {
+        try (Connection conn = getConnection()) {
+            var statement = "SELECT username FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.executeUpdate();
+                return true;
             }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        } catch (Exception e) {
+            if (e instanceof SQLException) {
+                throw new DataAccessException("Error retrieving password from database");
+            }
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    public void createUser(UserData userData) throws DataAccessException {
+        try (Connection conn = getConnection()) {
+            var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, userData.username());
+                var hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, userData.email());
+                preparedStatement.executeUpdate();
+            }
+        } catch (Exception e) {
+            if (e instanceof SQLException) {
+                throw new DataAccessException("Not able to add duser to database");
+            }
         }
     }
+
+    public String getPassword(String username) throws DataAccessException {
+        try (Connection conn = getConnection()) {
+            var statement = "SELECT password FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                var password = preparedStatement.executeQuery();
+                while (password.next()) {
+                    return password.getString("password");
+                }
+            }
+        } catch (Exception e) {
+            if (e instanceof SQLException) {
+                throw new DataAccessException("Error retrieving password from database");
+            }
+            System.out.println(e.getMessage());
+        }
+        return "";
+    }
+
+    public void clearUsers() throws DataAccessException {
+        try (Connection conn = getConnection()) {
+            var statement = "DROP TABLE users";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (Exception e) {
+            if (e instanceof SQLException) {
+                throw new DataAccessException("Error clearing user table");
+            }
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
 }
