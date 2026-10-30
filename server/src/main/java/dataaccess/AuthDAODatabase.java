@@ -94,8 +94,10 @@ public class AuthDAODatabase implements AuthDAO{
                 preparedStatement.setString(1, authToken);
                 var result = preparedStatement.executeQuery();
                 try {
-                    if (result.getString("authToken").equals(authToken)) {
-                        return true;
+                    while (result.next()) {
+                        if (result.getString("authToken").equals(authToken)) {
+                            return true;
+                        }
                     }
                 }
                 catch (Exception e){
