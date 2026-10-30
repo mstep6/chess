@@ -42,7 +42,7 @@ public class UserDAODatabase implements UserDAO {
             }
         } catch (Exception e) {
             if (e instanceof SQLException) {
-                throw new DataAccessException("Not able to add duser to database");
+                throw new DataAccessException("Not able to add user to database");
             }
         }
     }
@@ -68,7 +68,7 @@ public class UserDAODatabase implements UserDAO {
 
     public void clearUsers() throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "DROP TABLE users";
+            var statement = "TRUNCATE TABLE users";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
@@ -81,6 +81,26 @@ public class UserDAODatabase implements UserDAO {
         }
     }
 
-
-
+    public UserData getUser(String username) throws DataAccessException {
+        try (Connection conn = getConnection()) {
+            var statement = "SELECT username, password, email FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                var userData = preparedStatement.executeQuery();
+                while (userData.next()) {
+                    String user = userData.getString("username");
+                    String password = userData.getString("password");
+                    String email = userData.getString("email");
+                    return new UserData(user, password, email);
+                }
+            }
+        }
+        catch (Exception e) {
+            if (e instanceof SQLException) {
+                throw new DataAccessException("Error retrieving user info");
+            }
+            System.out.println(e.getMessage());
+        }
+        return new UserData(null, null, null);
+    }
 }
