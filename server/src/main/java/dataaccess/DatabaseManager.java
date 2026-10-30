@@ -23,8 +23,37 @@ public class DatabaseManager {
         var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
              var preparedStatement = conn.prepareStatement(statement)) {
+
             preparedStatement.executeUpdate();
+            conn.setCatalog(databaseName);
+
+            var userTable = """
+            CREATE TABLE IF NOT EXISTS users (
+            username VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            PRIMARY KEY (username),
+            INDEX(password)
+            )
+            """;
+            try (var preparedUserTable = conn.prepareStatement(userTable)) {
+                preparedUserTable.executeUpdate();
+            }
+            var authTable = """
+                    CREATE TABLE IF NOT EXISTS authData (
+                    authtoken VARCHAR(255) NOT NULL,
+                    username VARCHAR(255) NOT NULL,
+                    PRIMARY KEY (authtoken),
+                    INDEX(username))
+                    """;
+            try (var preparedAuthTable = conn.prepareStatement(authTable)) {
+                preparedAuthTable.executeUpdate();
+            }
+
+
+
         } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
             throw new DataAccessException("failed to create database", ex);
         }
     }
@@ -51,6 +80,7 @@ public class DatabaseManager {
             throw new DataAccessException("failed to get connection", ex);
         }
     }
+
 
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {

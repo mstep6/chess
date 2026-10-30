@@ -8,11 +8,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import resultsandrequests.*;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 class GameServiceTest {
     GameService gameService = new GameService();
     UserService userService = new UserService();
+
+    GameServiceTest() throws SQLException, DataAccessException {
+    }
 
 
     @BeforeEach

@@ -17,7 +17,7 @@ public class GameService {
     private final GameDAO gameDAO = new GameDAOMemory();
     private int gameID = 0;
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws BadRequestException, UnauthorizedException {
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws BadRequestException, UnauthorizedException, DataAccessException {
         if (createGameRequest.gameName() == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -51,7 +51,7 @@ public class GameService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest)
-            throws BadRequestException, GameDoesNotExistException, AlreadyTakenException, UnauthorizedException {
+            throws BadRequestException, GameDoesNotExistException, AlreadyTakenException, UnauthorizedException, DataAccessException {
         if (joinGameRequest.gameID() == null || joinGameRequest.playerColor() == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -76,7 +76,7 @@ public class GameService {
         }
     }
 
-    public ListGamesResult listAllGames(ListGamesRequest listGamesRequest) throws UnauthorizedException {
+    public ListGamesResult listAllGames(ListGamesRequest listGamesRequest) throws UnauthorizedException, DataAccessException {
         if (!authDAO.authTokenExists(listGamesRequest.authToken())) {
             throw new UnauthorizedException("Error: unauthorized");
         }

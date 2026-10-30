@@ -1,8 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import exceptions.*;
 import io.javalin.*;
+
+import java.sql.SQLException;
 import java.util.Map;
 import io.javalin.http.Context;
 import resultsandrequests.*;
@@ -10,20 +13,28 @@ import service.GameService;
 import service.UserService;
 
 public class Server {
-    private final UserService userService = new UserService();
-    private final GameService gameService = new GameService();
-    private final Javalin javalin;
+    private UserService userService;
+    private GameService gameService;
+    private Javalin javalin;
 
     public Server() {
-        javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                // Register your endpoints and exception handlers here.
-                .delete("/db", this::clearDb)
-                .post("/user", this::registerUser)
-                .post("/session", this::loginUser)
-                .delete("/session", this::logoutUser)
-                .get("/game", this::listGames)
-                .post("/game", this::createGame)
-                .put("/game", this::joinGame);
+        try {
+            userService = new UserService();
+            gameService = new GameService();
+            javalin = Javalin.create(config -> config.staticFiles.add("web"))
+                    // Register your endpoints and exception handlers here.
+                    .delete("/db", this::clearDb)
+                    .post("/user", this::registerUser)
+                    .post("/session", this::loginUser)
+                    .delete("/session", this::logoutUser)
+                    .get("/game", this::listGames)
+                    .post("/game", this::createGame)
+                    .put("/game", this::joinGame);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     private void setStatus(int status, Context ctx) {
@@ -171,7 +182,7 @@ public class Server {
         }
     }
 
-    public void clearDb(Context ctx) {
+    public void clearDb(Context ctx) throws DataAccessException {
         userService.clearDatabase();
     }
 
