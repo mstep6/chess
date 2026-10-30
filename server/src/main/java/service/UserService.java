@@ -9,14 +9,20 @@ import exceptions.WrongPasswordException;
 import model.UserData;
 import resultsandrequests.*;
 
+import java.sql.SQLException;
+
 public class UserService {
-    private final UserDAO userDAO = new UserDAOMemory();
-    private final AuthDAO authDAO = new AuthDAOMemory();
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
     private final GameDAO gameDAO = new GameDAOMemory();
 
-    public UserService () {
+//    public UserService() throws SQLException, DataAccessException {
+//    }
+
+    public UserService () throws SQLException, DataAccessException {
         try {
-            UserDAO jsdkljkl = new UserDAODatabase();
+            userDAO = new UserDAODatabase();
+            authDAO = new AuthDAODatabase();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException();
@@ -67,7 +73,7 @@ public class UserService {
         }
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException, DataAccessException {
         String authToken = logoutRequest.authToken();
         if (!authDAO.authTokenExists(authToken)) {
             throw new UnauthorizedException("error: unauthorized");

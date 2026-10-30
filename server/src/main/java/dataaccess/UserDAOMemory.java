@@ -26,4 +26,8 @@ public class UserDAOMemory implements UserDAO{
     public void clearUsers() {
         USER_INFO.clear();
     }
+
+    public UserData getUser(String username) {
+        return USER_INFO.get(username);
+    }
 }

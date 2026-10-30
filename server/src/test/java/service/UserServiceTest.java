@@ -10,8 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import resultsandrequests.*;
 
+import java.sql.SQLException;
+
 class UserServiceTest {
     UserService userService = new UserService();
+
+    UserServiceTest() throws SQLException, DataAccessException {
+    }
 
     @BeforeEach
     void clearData() throws DataAccessException {

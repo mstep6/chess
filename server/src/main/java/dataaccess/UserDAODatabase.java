@@ -19,14 +19,25 @@ public class UserDAODatabase implements UserDAO {
             var statement = "SELECT username FROM users WHERE username = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
-                preparedStatement.executeUpdate();
-                return true;
+                var result = preparedStatement.executeQuery();
+                try {
+                    while (result.next()) {
+                        if (result.getString("username").equals(username)) {
+                            return true;
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    return false;
+                }
             }
         } catch (Exception e) {
             if (e instanceof SQLException) {
-                throw new DataAccessException("Error retrieving password from database");
+                throw new DataAccessException("Error finding user in database");
             }
-            System.out.println(e.getMessage());
+            else {
+                System.out.println(e.getMessage());
+            }
         }
         return false;
     }
@@ -56,14 +67,17 @@ public class UserDAODatabase implements UserDAO {
                 while (password.next()) {
                     return password.getString("password");
                 }
+                return null;
             }
         } catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new DataAccessException("Error retrieving password from database");
             }
-            System.out.println(e.getMessage());
+            else {
+                System.out.println(e.getMessage());
+                return null;
+            }
         }
-        return "";
     }
 
     public void clearUsers() throws DataAccessException {
@@ -93,14 +107,17 @@ public class UserDAODatabase implements UserDAO {
                     String email = userData.getString("email");
                     return new UserData(user, password, email);
                 }
+                return null;
             }
         }
         catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new DataAccessException("Error retrieving user info");
             }
-            System.out.println(e.getMessage());
+            else {
+                System.out.println(e.getMessage());
+                return null;
+            }
         }
-        return new UserData(null, null, null);
     }
 }
