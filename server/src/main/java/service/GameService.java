@@ -12,10 +12,21 @@ import resultsandrequests.*;
 import java.util.ArrayList;
 
 public class GameService {
-    private final UserDAO userDAO = new UserDAOMemory();
-    private final AuthDAO authDAO = new AuthDAOMemory();
-    private final GameDAO gameDAO = new GameDAOMemory();
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
     private int gameID = 0;
+
+    void GameService() {
+        try {
+            userDAO = new UserDAODatabase();
+            authDAO = new AuthDAODatabase();
+            gameDAO = new GameDAODatabase();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException();
+        }
+    }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws BadRequestException, UnauthorizedException, DataAccessException {
         if (createGameRequest.gameName() == null) {

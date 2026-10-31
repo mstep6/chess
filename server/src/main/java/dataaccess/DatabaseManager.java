@@ -50,7 +50,22 @@ public class DatabaseManager {
                 preparedAuthTable.executeUpdate();
             }
 
+            var gamesTable = """
+                    CREATE TABLE IF NOT EXISTS games (
+                    gameID INT NOT NULL AUTO_INCREMENT,
+                    whiteUsername VARCHAR(255),
+                    blackUsername VARCHAR(255),
+                    gameName VARCHAR(255) NOT NULL,
+                    game TEXT,
+                    PRIMARY KEY (gameID),
+                    INDEX(whiteUsername),
+                    INDEX(blackUsername),
+                    INDEX(gameName))
+                    """;
 
+            try (var preparedGamesTable = conn.prepareStatement(gamesTable)) {
+                preparedGamesTable.executeUpdate();
+            }
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -80,7 +95,6 @@ public class DatabaseManager {
             throw new DataAccessException("failed to get connection", ex);
         }
     }
-
 
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
