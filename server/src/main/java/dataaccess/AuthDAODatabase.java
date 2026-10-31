@@ -7,23 +7,28 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static dataaccess.DatabaseManager.createDatabase;
 import static dataaccess.DatabaseManager.getConnection;
 
-public class AuthDAODatabase implements AuthDAO{
+public class AuthDAODatabase implements AuthDAO {
+
+    public AuthDAODatabase() throws SQLException, DataAccessException {
+        createDatabase();
+    }
+
     public String generateToken() {
         return UUID.randomUUID().toString();
     }
 
     public AuthData createAuthData(String username, String authToken) throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
+            var statement = "INSERT INTO auth (authtoken, username) VALUES (?, ?)";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 preparedStatement.setString(2, username);
                 preparedStatement.executeUpdate();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new DataAccessException("Error creating auth data");
             }
@@ -34,13 +39,12 @@ public class AuthDAODatabase implements AuthDAO{
 
     public void deleteAuthToken(String authToken) throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "DELETE FROM authData WHERE authToken = ?";
+            var statement = "DELETE FROM auth WHERE authtoken = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 preparedStatement.executeUpdate();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new DataAccessException("Error creating auth data");
             }
@@ -50,37 +54,35 @@ public class AuthDAODatabase implements AuthDAO{
 
     public void clearAuthData() throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "TRUNCATE TABLE authData";
+            var statement = "TRUNCATE TABLE auth";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (e instanceof SQLException) {
-                throw new DataAccessException("Error creating auth data");
+                throw new DataAccessException("Error clearing auth data");
             }
             System.out.println(e.getMessage());
         }
     }
+
     public AuthData findUser(String authToken) throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "SELECT authToken, username FROM authData WHERE authToken = ?";
+            var statement = "SELECT authtoken, username FROM auth WHERE authtoken = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 var authData = preparedStatement.executeQuery();
                 while (authData.next()) {
-                    var userAuthToken = authData.getString("authToken");
+                    var userAuthToken = authData.getString("authtoken");
                     var username = authData.getString("username");
                     return new AuthData(username, userAuthToken);
                 }
                 return null;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new DataAccessException("Error creating auth data");
-            }
-            else {
+            } else {
                 System.out.println(e.getMessage());
                 return null;
             }
@@ -89,27 +91,24 @@ public class AuthDAODatabase implements AuthDAO{
 
     public boolean authTokenExists(String authToken) throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "SELECT authToken FROM authData WHERE authToken = ?";
+            var statement = "SELECT authtoken FROM auth WHERE authtoken = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 var result = preparedStatement.executeQuery();
                 try {
                     while (result.next()) {
-                        if (result.getString("authToken").equals(authToken)) {
+                        if (result.getString("authtoken").equals(authToken)) {
                             return true;
                         }
                     }
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     return false;
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (e instanceof SQLException) {
                 throw new DataAccessException("Error finding the auth token");
-            }
-            else {
+            } else {
                 System.out.println(e.getMessage());
             }
         }

@@ -7,8 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.SQLException;
+
 public class AuthDAOTests {
     AuthDAODatabase database = new AuthDAODatabase();
+
+    public AuthDAOTests() throws SQLException, DataAccessException {
+    }
 
     @BeforeEach
     void clearData() throws DataAccessException {
