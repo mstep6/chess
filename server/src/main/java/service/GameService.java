@@ -17,7 +17,7 @@ public class GameService {
     private GameDAO gameDAO;
     private int gameID = 0;
 
-    void GameService() {
+    public GameService() {
         try {
             userDAO = new UserDAODatabase();
             authDAO = new AuthDAODatabase();
