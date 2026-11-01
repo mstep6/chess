@@ -31,6 +31,7 @@ public class UserDAODatabase implements UserDAO {
             System.out.println(e.getMessage());
         }
     }
+
     public boolean findUser(String username) throws DataAccessException {
         try (Connection conn = getConnection()) {
             var statement = "SELECT username FROM users WHERE username = ?";
