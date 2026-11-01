@@ -103,18 +103,17 @@ public class AuthDAODatabase implements AuthDAO {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 var result = preparedStatement.executeQuery();
-                try {
-                    while (result.next()) {
-                        if (result.getString("authtoken").equals(authToken)) {
-                            return true;
-                        }
+                while (result.next()) {
+                    if (result.getString("authtoken").equals(authToken)) {
+                        return true;
                     }
-                } catch (Exception e) {
-                    if (e instanceof SQLException) {
-                        throw new DataAccessException("Error finding the auth token");
-                    }
-                    return false;
                 }
+            }
+            catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw new DataAccessException("Error finding the auth token");
+                }
+                return false;
             }
         } catch (Exception e) {
             if (e instanceof SQLException || e instanceof DataAccessException) {

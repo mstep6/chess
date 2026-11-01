@@ -29,19 +29,17 @@ public class UserDAODatabase implements UserDAO {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
                 var result = preparedStatement.executeQuery();
-                try {
-                    while (result.next()) {
-                        if (result.getString("username").equals(username)) {
-                            return true;
-                        }
+                while (result.next()) {
+                    if (result.getString("username").equals(username)) {
+                        return true;
                     }
                 }
-                catch (Exception e) {
-                    if (e instanceof SQLException) {
-                        throw new DataAccessException("Error finding user");
-                    }
-                    return false;
+            }
+            catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw new DataAccessException("Error finding user");
                 }
+                return false;
             }
         } catch (Exception e) {
             if (e instanceof SQLException || e instanceof DataAccessException) {
