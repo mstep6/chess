@@ -1,6 +1,9 @@
 package server;
 
 import chess.*;
+import dataaccess.DataAccessException;
+
+import java.sql.SQLException;
 
 public class ServerMain {
     public static void main(String[] args) {

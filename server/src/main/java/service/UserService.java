@@ -7,6 +7,7 @@ import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import exceptions.WrongPasswordException;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import resultsandrequests.*;
 
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 public class UserService {
     private UserDAO userDAO;
     private AuthDAO authDAO;
-    private final GameDAO gameDAO = new GameDAOMemory();
+    private GameDAO gameDAO;
 
 //    public UserService() throws SQLException, DataAccessException {
 //    }
@@ -23,9 +24,16 @@ public class UserService {
         try {
             userDAO = new UserDAODatabase();
             authDAO = new AuthDAODatabase();
+            gameDAO = new GameDAODatabase();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException();
+            if (e instanceof SQLException || e instanceof DataAccessException) {
+                throw new DataAccessException("Error starting the user service");
+            }
+            else {
+                System.out.println(e.getMessage());
+                throw new RuntimeException();
+            }
+
         }
     }
 
@@ -48,10 +56,8 @@ public class UserService {
     }
 
     public boolean checkPassword(String username, String password) throws DataAccessException {
-        if (password.equals(userDAO.getPassword(username))) {
-            return true;
-        }
-        return false;
+        var hashedPassword = userDAO.getPassword(username);
+        return BCrypt.checkpw(password, hashedPassword);
     }
 
     public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, WrongPasswordException, DataAccessException {
@@ -86,6 +92,7 @@ public class UserService {
         userDAO.clearUsers();
         authDAO.clearAuthData();
         gameDAO.clearGameData();
+
     }
 
 }

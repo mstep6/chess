@@ -9,6 +9,8 @@ import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import resultsandrequests.*;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class GameService {
@@ -17,14 +19,20 @@ public class GameService {
     private GameDAO gameDAO;
     private int gameID = 0;
 
-    public GameService() {
+    public GameService() throws DataAccessException {
         try {
             userDAO = new UserDAODatabase();
             authDAO = new AuthDAODatabase();
             gameDAO = new GameDAODatabase();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException();
+            if (e instanceof SQLException) {
+                throw new DataAccessException("Error starting the game service");
+            }
+            else {
+                System.out.println(e.getMessage());
+                throw new RuntimeException();
+            }
+
         }
     }
 
@@ -94,5 +102,7 @@ public class GameService {
         ArrayList<GameData> gameList = gameDAO.getGames();
         return new ListGamesResult(gameList);
     }
+
+
 
 }

@@ -70,6 +70,9 @@ public class Server {
             else if (e instanceof GameDoesNotExistException || e instanceof AlreadyTakenException) {
                 setStatus(403, ctx);
             }
+            else if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
+            }
             convertErrorToJson(ctx, e);
         }
     }
@@ -95,6 +98,9 @@ public class Server {
             else if (e instanceof BadRequestException) {
                 setStatus(400, ctx);
             }
+            else if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
+            }
             convertErrorToJson(ctx, e);
         }
     }
@@ -114,6 +120,9 @@ public class Server {
         } catch (Exception e) {
             if (e instanceof UnauthorizedException) {
                 setStatus(401, ctx);
+            }
+            else if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
             }
             convertErrorToJson(ctx, e);
         }
@@ -138,6 +147,9 @@ public class Server {
             else if (e instanceof BadRequestException) {
                 setStatus(400, ctx);
             }
+            else if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
+            }
             convertErrorToJson(ctx, e);
         }
     }
@@ -156,6 +168,9 @@ public class Server {
         catch (Exception e) {
             if (e instanceof WrongPasswordException || e instanceof UnauthorizedException) {
                 setStatus(401, ctx);
+            }
+            else if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
             }
             convertErrorToJson(ctx, e);
         }
@@ -178,12 +193,22 @@ public class Server {
             if (e instanceof UnauthorizedException) {
                 setStatus(401, ctx);
             }
+            else if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
+            }
             convertErrorToJson(ctx, e);
         }
     }
 
     public void clearDb(Context ctx) throws DataAccessException {
-        userService.clearDatabase();
+        try {
+            userService.clearDatabase();
+        } catch (Exception e) {
+            if (e instanceof DataAccessException) {
+                setStatus(500, ctx);
+                convertErrorToJson(ctx, e);
+            }
+        }
     }
 
 

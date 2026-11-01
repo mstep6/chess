@@ -12,7 +12,15 @@ import static dataaccess.DatabaseManager.getConnection;
 
 public class UserDAODatabase implements UserDAO {
     public UserDAODatabase() throws SQLException, DataAccessException {
-        createDatabase();
+        try {
+            createDatabase();
+        }
+        catch(Exception e) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
+                throw new DataAccessException("Error starting database");
+            }
+        }
+
     }
     public boolean findUser(String username) throws DataAccessException {
         try (Connection conn = getConnection()) {
@@ -28,11 +36,14 @@ public class UserDAODatabase implements UserDAO {
                     }
                 }
                 catch (Exception e) {
+                    if (e instanceof SQLException) {
+                        throw new DataAccessException("Error finding user");
+                    }
                     return false;
                 }
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error finding user in database");
             }
             else {
@@ -52,7 +63,7 @@ public class UserDAODatabase implements UserDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Not able to add user to database");
             }
         }
@@ -70,7 +81,7 @@ public class UserDAODatabase implements UserDAO {
                 return null;
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error retrieving password from database");
             }
             else {
@@ -88,7 +99,7 @@ public class UserDAODatabase implements UserDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error clearing user table");
             }
             System.out.println(e.getMessage());
@@ -111,7 +122,7 @@ public class UserDAODatabase implements UserDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error retrieving user info");
             }
             else {

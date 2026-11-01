@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 import resultsandrequests.JoinGameRequest;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,7 +16,14 @@ import static dataaccess.DatabaseManager.getConnection;
 public class GameDAODatabase implements GameDAO{
 
     public GameDAODatabase() throws SQLException, DataAccessException {
-        createDatabase();
+        try {
+            createDatabase();
+        }
+        catch(Exception e) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
+                throw new DataAccessException("Error starting database");
+            }
+        }
     }
 
     public void clearGameData() throws DataAccessException {
@@ -26,7 +34,7 @@ public class GameDAODatabase implements GameDAO{
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error clearing game data");
             }
             System.out.println(e.getMessage());
@@ -47,7 +55,7 @@ public class GameDAODatabase implements GameDAO{
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error creating game");
             }
             System.out.println(e.getMessage());
@@ -73,7 +81,7 @@ public class GameDAODatabase implements GameDAO{
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error finding game");
             }
             else {
@@ -97,7 +105,7 @@ public class GameDAODatabase implements GameDAO{
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error retrieving game list");
             }
             else {
@@ -122,11 +130,11 @@ public class GameDAODatabase implements GameDAO{
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
                 preparedStatement.setInt(2, gameData.gameID());
-                var result = preparedStatement.executeUpdate();
+                preparedStatement.executeUpdate();
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error occurred while player tried to join game");
             }
             else {

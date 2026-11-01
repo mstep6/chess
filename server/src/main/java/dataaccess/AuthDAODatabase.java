@@ -13,7 +13,14 @@ import static dataaccess.DatabaseManager.getConnection;
 public class AuthDAODatabase implements AuthDAO {
 
     public AuthDAODatabase() throws SQLException, DataAccessException {
-        createDatabase();
+        try {
+            createDatabase();
+        }
+        catch(Exception e) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
+                throw new DataAccessException("Error starting database");
+            }
+        }
     }
 
     public String generateToken() {
@@ -29,7 +36,7 @@ public class AuthDAODatabase implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error creating auth data");
             }
             System.out.println(e.getMessage());
@@ -45,7 +52,7 @@ public class AuthDAODatabase implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error creating auth data");
             }
             System.out.println(e.getMessage());
@@ -59,7 +66,7 @@ public class AuthDAODatabase implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error clearing auth data");
             }
             System.out.println(e.getMessage());
@@ -80,7 +87,7 @@ public class AuthDAODatabase implements AuthDAO {
                 return null;
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error creating auth data");
             } else {
                 System.out.println(e.getMessage());
@@ -102,11 +109,14 @@ public class AuthDAODatabase implements AuthDAO {
                         }
                     }
                 } catch (Exception e) {
+                    if (e instanceof SQLException) {
+                        throw new DataAccessException("Error finding the auth token");
+                    }
                     return false;
                 }
             }
         } catch (Exception e) {
-            if (e instanceof SQLException) {
+            if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error finding the auth token");
             } else {
                 System.out.println(e.getMessage());
