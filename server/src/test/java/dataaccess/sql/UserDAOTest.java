@@ -108,4 +108,18 @@ class UserDAOTest {
         Assertions.assertNull(password);
     }
 
+    @Test
+    void getUser() throws DataAccessException {
+        UserData userData = new UserData("username", "password", "email");
+        database.createUser(userData);
+        var result = database.findUser("username");
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void getUserThatDoesNotExist() throws DataAccessException {
+        var result = database.findUser("username");
+        Assertions.assertFalse(result);
+    }
+
 }
