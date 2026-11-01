@@ -17,9 +17,7 @@ public class AuthDAODatabase implements AuthDAO {
             createDatabase();
         }
         catch(Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error starting database");
-            }
+            handleSQLDataExceptions(e, "Error starting database");
         }
     }
 
