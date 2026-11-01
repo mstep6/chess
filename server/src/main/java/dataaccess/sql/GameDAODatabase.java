@@ -27,6 +27,15 @@ public class GameDAODatabase implements GameDAO {
         }
     }
 
+    public void handleSQLDataExceptions (Exception e, String errorMessage) throws DataAccessException {
+        if (e instanceof SQLException || e instanceof DataAccessException) {
+            throw new DataAccessException(errorMessage);
+        }
+        else {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void clearGameData() throws DataAccessException {
         try (Connection conn = getConnection()) {
             var statement = "TRUNCATE TABLE games";
@@ -35,10 +44,7 @@ public class GameDAODatabase implements GameDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error clearing game data");
-            }
-            System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "Error clearing game data");
         }
     }
 
@@ -56,10 +62,7 @@ public class GameDAODatabase implements GameDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error creating game");
-            }
-            System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "error creating game");
         }
     }
 
@@ -82,13 +85,8 @@ public class GameDAODatabase implements GameDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error finding game");
-            }
-            else {
-                System.out.println(e.getMessage());
-                return null;
-            }
+            handleSQLDataExceptions(e, "error finding game");
+            return null;
         }
     }
 
@@ -106,14 +104,8 @@ public class GameDAODatabase implements GameDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error retrieving game list");
-            }
-            else {
-                System.out.println(e.getMessage());
-                return null;
-            }
-
+            handleSQLDataExceptions(e, "Error listing games");
+            return null;
         }
     }
 
@@ -135,12 +127,7 @@ public class GameDAODatabase implements GameDAO {
             }
         }
         catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error occurred while player tried to join game");
-            }
-            else {
-                System.out.println(e.getMessage());
-            }
+            handleSQLDataExceptions(e, "Error occurred when player tried to join game");
         }
     }
 }
