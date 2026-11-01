@@ -11,8 +11,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static dataaccess.DatabaseManager.createDatabase;
-import static dataaccess.DatabaseManager.getConnection;
+import static dataaccess.DatabaseManager.*;
 
 public class GameDAODatabase implements GameDAO {
 
@@ -21,18 +20,7 @@ public class GameDAODatabase implements GameDAO {
             createDatabase();
         }
         catch(Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error starting database");
-            }
-        }
-    }
-
-    public void handleSQLDataExceptions (Exception e, String errorMessage) throws DataAccessException {
-        if (e instanceof SQLException || e instanceof DataAccessException) {
-            throw new DataAccessException(errorMessage);
-        }
-        else {
-            System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "Error creating database");
         }
     }
 

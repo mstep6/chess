@@ -96,6 +96,15 @@ public class DatabaseManager {
         }
     }
 
+    public static void handleSQLDataExceptions (Exception e, String errorMessage) throws DataAccessException {
+        if (e instanceof SQLException || e instanceof DataAccessException) {
+            throw new DataAccessException(errorMessage);
+        }
+        else {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
             if (propStream == null) {

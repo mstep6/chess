@@ -8,8 +8,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static dataaccess.DatabaseManager.createDatabase;
-import static dataaccess.DatabaseManager.getConnection;
+import static dataaccess.DatabaseManager.*;
 
 public class UserDAODatabase implements UserDAO {
     public UserDAODatabase() throws SQLException, DataAccessException {
@@ -20,15 +19,6 @@ public class UserDAODatabase implements UserDAO {
             if (e instanceof SQLException || e instanceof DataAccessException) {
                 throw new DataAccessException("Error starting database");
             }
-        }
-    }
-
-    public void handleSQLDataExceptions (Exception e, String errorMessage) throws DataAccessException {
-        if (e instanceof SQLException || e instanceof DataAccessException) {
-            throw new DataAccessException(errorMessage);
-        }
-        else {
-            System.out.println(e.getMessage());
         }
     }
 
