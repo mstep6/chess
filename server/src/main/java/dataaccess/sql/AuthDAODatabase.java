@@ -96,9 +96,7 @@ public class AuthDAODatabase implements AuthDAO {
                 }
             }
             catch (Exception e) {
-                if (e instanceof SQLException) {
-                    throw new DataAccessException("Error finding the auth token");
-                }
+                handleSQLDataExceptions(e, "Error finding the auth token");
                 return false;
             }
         } catch (Exception e) {
