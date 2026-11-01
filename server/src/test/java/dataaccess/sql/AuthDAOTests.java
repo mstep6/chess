@@ -28,6 +28,11 @@ public class AuthDAOTests {
     }
 
     @Test
+    void createAuthDataInvalid() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, () -> database.createAuthData(null, null));
+    }
+
+    @Test
     void deleteAuthToken() throws DataAccessException {
         database.createAuthData("myUsername", "authToken");
         database.deleteAuthToken("authToken");
@@ -43,6 +48,17 @@ public class AuthDAOTests {
         Assertions.assertNull(database.findUser("auth1"));
         Assertions.assertNull(database.findUser("auth2"));
         Assertions.assertNull(database.findUser("auth3"));
+    }
+
+    @Test
+    void databaseNotClear() throws DataAccessException {
+        database.createAuthData("user1", "auth1");
+        database.createAuthData("user2", "auth2");
+        database.clearAuthData();
+        database.createAuthData("user3", "auth3");
+        var result = database.findUser("auth3");
+        Assertions.assertEquals(new AuthData("user3", "auth3"), result);
+        Assertions.assertNull(database.findUser("auth1"));
     }
 
     @Test
