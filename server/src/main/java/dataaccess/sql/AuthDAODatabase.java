@@ -8,8 +8,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
-import static dataaccess.DatabaseManager.createDatabase;
-import static dataaccess.DatabaseManager.getConnection;
+import static dataaccess.DatabaseManager.*;
 
 public class AuthDAODatabase implements AuthDAO {
 
@@ -37,10 +36,7 @@ public class AuthDAODatabase implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error creating auth data");
-            }
-            System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "Error adding auth data");
         }
         return new AuthData(username, authToken);
     }
@@ -53,10 +49,7 @@ public class AuthDAODatabase implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error creating auth data");
-            }
-            System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "Error deleting auth data");
         }
     }
 
@@ -67,10 +60,7 @@ public class AuthDAODatabase implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error clearing auth data");
-            }
-            System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "Error clearing auth data");
         }
     }
 
@@ -88,12 +78,8 @@ public class AuthDAODatabase implements AuthDAO {
                 return null;
             }
         } catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error creating auth data");
-            } else {
-                System.out.println(e.getMessage());
-                return null;
-            }
+            handleSQLDataExceptions(e, "Error finding user given auth token");
+            return null;
         }
     }
 
@@ -116,11 +102,7 @@ public class AuthDAODatabase implements AuthDAO {
                 return false;
             }
         } catch (Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error finding the auth token");
-            } else {
-                System.out.println(e.getMessage());
-            }
+            handleSQLDataExceptions(e, "Error Auth token could not be verified");
         }
         return false;
     }
