@@ -100,4 +100,13 @@ public class AuthDAOTests {
         Assertions.assertFalse(database.authTokenExists("auth1"));
     }
 
+    @Test
+    void authTokenDoesNotExistAfterClear() throws DataAccessException {
+        database.createAuthData("username", "auth1");
+        var firstFind = database.authTokenExists("auth1");
+        Assertions.assertTrue(firstFind);
+        database.clearAuthData();
+        Assertions.assertFalse(database.authTokenExists("auth1"));
+    }
+
 }
