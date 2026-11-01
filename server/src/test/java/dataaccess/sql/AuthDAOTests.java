@@ -20,6 +20,11 @@ public class AuthDAOTests {
     }
 
     @Test
+    void generateAuthToken() {
+        Assertions.assertNotNull(database.generateToken());
+    }
+
+    @Test
     void createAuthData() throws DataAccessException {
         database.createAuthData("myUsername", "authToken");
         AuthData result = database.findUser("authToken");
@@ -30,6 +35,16 @@ public class AuthDAOTests {
     @Test
     void createAuthDataInvalid() throws DataAccessException {
         Assertions.assertThrows(DataAccessException.class, () -> database.createAuthData(null, null));
+    }
+
+    @Test
+    void createAuthDataInvalidUsername() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, () -> database.createAuthData(null, "auth"));
+    }
+
+    @Test
+    void createAuthDataInvalidAuthToken() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, () -> database.createAuthData("username", null));
     }
 
     @Test
