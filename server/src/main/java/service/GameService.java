@@ -2,6 +2,9 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import dataaccess.sql.AuthDAODatabase;
+import dataaccess.sql.GameDAODatabase;
+import dataaccess.sql.UserDAODatabase;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.GameDoesNotExistException;

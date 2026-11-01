@@ -1,7 +1,9 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.UserDAODatabase;
+import dataaccess.sql.UserDAODatabase;
+import dataaccess.sql.AuthDAODatabase;
+import dataaccess.sql.GameDAODatabase;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;

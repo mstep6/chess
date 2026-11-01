@@ -1,11 +1,10 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
 import model.AuthData;
-import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 

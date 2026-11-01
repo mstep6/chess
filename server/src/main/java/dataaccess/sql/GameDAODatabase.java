@@ -1,11 +1,12 @@
-package dataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import model.GameData;
 import resultsandrequests.JoinGameRequest;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import static dataaccess.DatabaseManager.createDatabase;
 import static dataaccess.DatabaseManager.getConnection;
 
-public class GameDAODatabase implements GameDAO{
+public class GameDAODatabase implements GameDAO {
 
     public GameDAODatabase() throws SQLException, DataAccessException {
         try {

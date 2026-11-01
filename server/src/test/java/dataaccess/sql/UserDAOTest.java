@@ -1,16 +1,13 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
-import resultsandrequests.RegisterRequest;
-import resultsandrequests.RegisterResult;
-import service.UserService;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 
 class UserDAOTest {
 
