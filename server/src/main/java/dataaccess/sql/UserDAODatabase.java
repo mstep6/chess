@@ -16,9 +16,7 @@ public class UserDAODatabase implements UserDAO {
             createDatabase();
         }
         catch(Exception e) {
-            if (e instanceof SQLException || e instanceof DataAccessException) {
-                throw new DataAccessException("Error starting database");
-            }
+            handleSQLDataExceptions(e, "Error starting database");
         }
     }
 
@@ -35,9 +33,7 @@ public class UserDAODatabase implements UserDAO {
                 }
             }
             catch (Exception e) {
-                if (e instanceof SQLException) {
-                    throw new DataAccessException("Error finding user");
-                }
+                handleSQLDataExceptions(e, "Error finding user");
                 return false;
             }
         } catch (Exception e) {
