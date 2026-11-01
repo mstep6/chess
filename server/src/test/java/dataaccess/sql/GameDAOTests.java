@@ -32,6 +32,12 @@ public class GameDAOTests {
     }
 
     @Test
+    void createInvalidGame() {
+        GameData gameData = new GameData(0, null, null, null, new ChessGame());
+        Assertions.assertThrows(DataAccessException.class, () -> database.createGame(gameData));
+    }
+
+    @Test
     void listGames() throws DataAccessException {
         GameData gameData1 = new GameData(1, null, null, "gameName1", new ChessGame());
         GameData gameData2 = new GameData(2, null, null, "gameName2", new ChessGame());
@@ -48,12 +54,45 @@ public class GameDAOTests {
     }
 
     @Test
-    void updatePlayers() throws DataAccessException {
+    void updatePlayersWhiteUsername() throws DataAccessException {
         GameData gameData = new GameData(1, null, null, "game", new ChessGame());
         database.createGame(gameData);
         JoinGameRequest joinGameRequest = new JoinGameRequest("auth", ChessGame.TeamColor.WHITE, 1);
         database.updatePlayers("username", joinGameRequest, gameData);
         GameData result = database.findGame(1);
         Assertions.assertEquals("username", result.whiteUsername());
+    }
+
+    @Test
+    void updatePlayersBlackUsername() throws DataAccessException {
+        GameData gameData = new GameData(1, null, null, "game", new ChessGame());
+        database.createGame(gameData);
+        JoinGameRequest joinGameRequest = new JoinGameRequest("auth", ChessGame.TeamColor.BLACK, 1);
+        database.updatePlayers("username", joinGameRequest, gameData);
+        GameData result = database.findGame(1);
+        Assertions.assertEquals("username", result.blackUsername());
+    }
+
+    @Test
+    void clearGamesTable() throws DataAccessException {
+        database.createGame(new GameData(1, "white", "black", "game1", new ChessGame()));
+        database.createGame(new GameData(2, "white2", "black2", "game2", new ChessGame()));
+        database.createGame(new GameData(3, "white3", "black3", "game3", new ChessGame()));
+        database.clearGameData();
+        GameData result = database.findGame(1);
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    void clearGamesAndAdd() throws DataAccessException {
+        database.createGame(new GameData(1, "white", "black", "game1", new ChessGame()));
+        database.createGame(new GameData(2, "white2", "black2", "game2", new ChessGame()));
+        database.clearGameData();
+        GameData result = database.findGame(1);
+        Assertions.assertNull(result);
+        GameData gameData = new GameData(3, "white", "black", "game", new ChessGame());
+        database.createGame(gameData);
+        var result2 = database.findGame(3);
+        Assertions.assertEquals(gameData, result2);
     }
 }
