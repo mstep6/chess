@@ -68,6 +68,11 @@ class UserDAOTest {
     }
 
     @Test
+    void findUserThatDoesNotExistError() throws DataAccessException {
+        Assertions.assertFalse(database.findUser("myUsername"));
+    }
+
+    @Test
     void clearUserTable() throws DataAccessException {
         database.createUser(new UserData("user1", "pass1", "email1"));
         database.createUser(new UserData("user2", "pass2", "email2"));
