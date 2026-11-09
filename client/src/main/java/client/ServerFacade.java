@@ -1,6 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
+import model.AuthData;
 import resultsandrequests.*;
 
 import java.io.IOException;
@@ -13,43 +14,57 @@ public class ServerFacade {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverURL;
+    private AuthData authData;
+    private State userState = State.LOGGED_OUT;
 
     public ServerFacade(String url) {
         serverURL = url;
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws IOException, InterruptedException {
-        var request = buildRequest("POST", "/user", registerRequest);
+        var request = buildRequest("POST", "user", registerRequest);
         var response = sendRequest(request);
-        return handleResponse(response, RegisterResult.class);
+        RegisterResult registerResult = handleResponse(response, RegisterResult.class);
+        if (registerResult != null) {
+            authData = new AuthData(registerRequest.username(), registerResult.authToken());
+            userState = State.LOGGED_IN;
+        }
+        return registerResult;
     }
 
     public LoginResult login(LoginRequest loginRequest) throws IOException, InterruptedException {
-        var request = buildRequest("POST", "/session", loginRequest);
+        var request = buildRequest("POST", "session", loginRequest);
         var response = sendRequest(request);
-        return handleResponse(response, LoginResult.class);
+        LoginResult loginResult = handleResponse(response, LoginResult.class);
+        if (loginResult != null) {
+            authData = new AuthData(loginResult.username(), loginResult.authToken());
+            userState = State.LOGGED_IN;
+        }
+        return loginResult;
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws IOException, InterruptedException {
-        var request = buildRequest("DELETE", "/session", logoutRequest);
+        var request = buildRequest("DELETE", "session", logoutRequest);
         var response = sendRequest(request);
+        authData = null;
+        userState = State.LOGGED_OUT;
         return handleResponse(response, LogoutResult.class);
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws IOException, InterruptedException {
-        var request = buildRequest("GET", "/game", listGamesRequest);
+        var request = buildRequest("GET", "game", listGamesRequest);
         var response = sendRequest(request);
         return handleResponse(response, ListGamesResult.class);
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws IOException, InterruptedException {
-        var request = buildRequest("POST", "/game", createGameRequest);
+        var request = buildRequest("POST", "game", createGameRequest);
         var response = sendRequest(request);
         return handleResponse(response, CreateGameResult.class);
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws IOException, InterruptedException {
-        var request = buildRequest("PUT", "/game", joinGameRequest);
+        var request = buildRequest("PUT", "game", joinGameRequest);
         var response = sendRequest(request);
         return handleResponse(response, JoinGameResult.class);
     }
@@ -61,9 +76,9 @@ public class ServerFacade {
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
-//        else {
-//            request.setHeader("authorization", )
-//        }
+        if (userState == State.LOGGED_IN) {
+            request.setHeader("authorization", authData.authToken());
+        }
         return request.build();
     }
 
