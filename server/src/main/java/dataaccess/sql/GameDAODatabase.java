@@ -50,7 +50,8 @@ public class GameDAODatabase implements GameDAO {
             }
         }
         catch (Exception e) {
-            handleSQLDataExceptions(e, "error creating game");
+            //System.out.println(e.getMessage());
+            handleSQLDataExceptions(e, "Error occurred while creating a game to add to the database");
         }
     }
 

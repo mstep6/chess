@@ -5,7 +5,6 @@ import dataaccess.DataAccessException;
 import exceptions.*;
 import io.javalin.*;
 
-import java.sql.SQLException;
 import java.util.Map;
 import io.javalin.http.Context;
 import resultsandrequests.*;
@@ -101,6 +100,7 @@ public class Server {
             else if (e instanceof DataAccessException) {
                 setStatus(500, ctx);
             }
+            //System.out.println(e.getMessage());
             convertErrorToJson(ctx, e);
         }
     }
