@@ -98,6 +98,7 @@ public class ChessClient {
              else {
                  userState = State.LOGGED_IN;
                  authData = new AuthData(registerResult.username(), registerResult.authToken());
+                 System.out.println("You have successfully registered!\n");
                  help();
              }
 
@@ -121,6 +122,7 @@ public class ChessClient {
             else {
                 userState = State.LOGGED_IN;
                 authData = new AuthData(loginresult.username(), loginresult.authToken());
+                System.out.println("You are logged in.\n");
                 help();
             }
         } catch (Exception e) {
@@ -139,6 +141,9 @@ public class ChessClient {
             if (createGameResult == null) {
                 System.out.println("Error occurred while creating game");
             }
+            else {
+                System.out.println("This game was created\n");
+            }
         } catch (Exception e) {
             handleErrors(e);
         }
@@ -152,9 +157,10 @@ public class ChessClient {
                 System.out.println("Error occurred while listing games");
             }
             else {
+                System.out.println("Here is a list of the current games.\n");
                 var games = listGamesResult.games();
                 for (int i = 1; i <= games.size(); i++) {
-                    var game = games.get(i);
+                    var game = games.get(i-1);
                     System.out.println(String.format("%d. Game Name: %s White Username: %s Black Username: %s", i, game.gameName(), game.whiteUsername(), game.blackUsername()));
                 }
             }
@@ -169,8 +175,8 @@ public class ChessClient {
         }
         try {
             checkIfLoggedIn();
-            String playerColor = params[0].toLowerCase();
-            Integer gameID = Integer.parseInt(params[1]);
+            String playerColor = params[1].toLowerCase();
+            Integer gameID = Integer.parseInt(params[0]);
             ChessGame.TeamColor teamColor;
             if (playerColor.equals("white")) {
                 teamColor = ChessGame.TeamColor.WHITE;
@@ -181,6 +187,9 @@ public class ChessClient {
             JoinGameResult joinGameResult = server.joinGame(new JoinGameRequest(authData.authToken(), teamColor, gameID));
             if (joinGameResult == null) {
                 System.out.println("Error occurred while trying to join game");
+            }
+            else {
+                System.out.println("You have joined the game.\n");
             }
         } catch (Exception e) {
             handleErrors(e);
@@ -195,6 +204,7 @@ public class ChessClient {
                 System.out.println("Error occurred while logging out");
             }
             else {
+                System.out.println("You are logged out. Thanks for playing!\n");
                 userState = State.LOGGED_OUT;
                 help();
             }
