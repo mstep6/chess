@@ -98,22 +98,31 @@ public class ChessClient {
         System.out.print(EscapeSequences.RESET_TEXT_COLOR + EscapeSequences.RESET_BG_COLOR);
     }
 
-    public void addPieces(String pieceColor, String currColor) {
-        System.out.print(pieceColor + currColor + " R ");
+    public void addPieces(String pieceColor, String currColor, String perspective) {
+        String[] black = {" R ", " N ", " B ", " K ", " Q ", " B ", " N ", " R "};
+        String[] white = {" R ", " N ", " B ", " Q ", " K ", " B ", " N ", " R "};
+        String[] order;
+        if (perspective.equals("black")) {
+            order = black;
+        }
+        else {
+            order = white;
+        }
+        System.out.print(pieceColor + currColor + order[0]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor + currColor + " N ");
+        System.out.print(pieceColor + currColor + order[1]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor + currColor + " B ");
+        System.out.print(pieceColor + currColor + order[2]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor + currColor + " K ");
+        System.out.print(pieceColor + currColor + order[3]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor + currColor + " Q ");
+        System.out.print(pieceColor + currColor + order[4]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor + currColor + " B ");
+        System.out.print(pieceColor + currColor + order[5]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor  + currColor + " N ");
+        System.out.print(pieceColor  + currColor + order[6]);
         currColor = switchColors(currColor);
-        System.out.print(pieceColor + currColor + " R ");
+        System.out.print(pieceColor + currColor + order[7]);
     }
 
     public void drawBoardSquares(int[] rows, String perspective) {
@@ -135,16 +144,16 @@ public class ChessClient {
                 addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLACK, "black");
             }
             else if (i == 0 && perspective.equals("black")) {
-                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor);
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor, perspective);
             }
             else if (i == 7 && perspective.equals("white")) {
-                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor);
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor, perspective);
             }
             else if (i == 0 && perspective.equals("white")) {
-                addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor);
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor, perspective);
             }
             else if (i == 7 && perspective.equals("black")) {
-                addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor);
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor, perspective);
             }
             else {
                 for (int j = 0; j < 8; j++) {
