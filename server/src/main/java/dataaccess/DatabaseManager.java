@@ -52,7 +52,7 @@ public class DatabaseManager {
 
             var gamesTable = """
                     CREATE TABLE IF NOT EXISTS games (
-                    gameID INT NOT NULL AUTO_INCREMENT,
+                    gameID INT NOT NULL,
                     whiteUsername VARCHAR(255),
                     blackUsername VARCHAR(255),
                     gameName VARCHAR(255) NOT NULL,
