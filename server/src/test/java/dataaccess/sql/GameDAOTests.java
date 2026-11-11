@@ -90,9 +90,9 @@ public class GameDAOTests {
         database.clearGameData();
         GameData result = database.findGame(1);
         Assertions.assertNull(result);
-        GameData gameData = new GameData(3, "white", "black", "game", new ChessGame());
+        GameData gameData = new GameData(1, "white", "black", "game", new ChessGame());
         database.createGame(gameData);
-        var result2 = database.findGame(3);
+        var result2 = database.findGame(1);
         Assertions.assertEquals(gameData, result2);
     }
 }

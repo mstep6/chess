@@ -9,6 +9,7 @@ import resultsandrequests.JoinGameRequest;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import static dataaccess.DatabaseManager.*;
@@ -36,23 +37,31 @@ public class GameDAODatabase implements GameDAO {
         }
     }
 
-    public void createGame(GameData gameData) throws DataAccessException {
+    public int createGame(GameData gameData) throws DataAccessException {
         try (Connection conn = getConnection()) {
-            var statement = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setInt(1, gameData.gameID());
-                preparedStatement.setString(2, gameData.whiteUsername());
-                preparedStatement.setString(3, gameData.blackUsername());
-                preparedStatement.setString(4, gameData.gameName());
+            var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+            try (var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, gameData.whiteUsername());
+                preparedStatement.setString(2, gameData.blackUsername());
+                preparedStatement.setString(3, gameData.gameName());
                 var jsonGame = new Gson().toJson(gameData.game());
-                preparedStatement.setString(5, jsonGame);
+                preparedStatement.setString(4, jsonGame);
                 preparedStatement.executeUpdate();
+
+                var result = preparedStatement.getGeneratedKeys();
+                int gameID = 0;
+                if (result.next()) {
+                    gameID = result.getInt(1);
+                    //System.out.println(gameID);
+                }
+                return gameID;
             }
         }
         catch (Exception e) {
             //System.out.println(e.getMessage());
             handleSQLDataExceptions(e, "Error occurred while creating a game to add to the database");
         }
+        return 999;
     }
 
     public GameData findGame(Integer gameID) throws DataAccessException {

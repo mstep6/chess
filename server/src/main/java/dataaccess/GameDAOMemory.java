@@ -9,9 +9,10 @@ import java.util.ArrayList;
 public class GameDAOMemory implements GameDAO {
     private final static ArrayList<GameData> GAME_INFO = new ArrayList<>();
 
-    public void createGame(GameData gameData) {
+    public int createGame(GameData gameData) {
         int gameID = gameData.gameID();
         GAME_INFO.add(gameData);
+        return gameID;
     }
     public void clearGameData() {
         GAME_INFO.clear();

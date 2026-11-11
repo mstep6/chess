@@ -58,9 +58,9 @@ public class GameService {
             gameID += 1;
             String gameName = createGameRequest.gameName();
             ChessGame game = new ChessGame();
-            GameData gameData = new GameData(gameID, null, null, gameName, game);
-            gameDAO.createGame(gameData);
-            return new CreateGameResult(gameID);
+            GameData gameData = new GameData(1, null, null, gameName, game);
+            int currGameID = gameDAO.createGame(gameData);
+            return new CreateGameResult(currGameID);
         }
     }
 
