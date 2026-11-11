@@ -21,8 +21,13 @@ public class ServerFacade {
         serverURL = url;
     }
 
+    public void clearDb() throws IOException, InterruptedException {
+        var request = buildRequest("DELETE", "/db", null);
+        var response = sendRequest(request);
+    }
+
     public RegisterResult register(RegisterRequest registerRequest) throws IOException, InterruptedException {
-        var request = buildRequest("POST", "user", registerRequest);
+        var request = buildRequest("POST", "/user", registerRequest);
         var response = sendRequest(request);
         RegisterResult registerResult = handleResponse(response, RegisterResult.class);
         if (registerResult != null) {
@@ -33,7 +38,7 @@ public class ServerFacade {
     }
 
     public LoginResult login(LoginRequest loginRequest) throws IOException, InterruptedException {
-        var request = buildRequest("POST", "session", loginRequest);
+        var request = buildRequest("POST", "/session", loginRequest);
         var response = sendRequest(request);
         LoginResult loginResult = handleResponse(response, LoginResult.class);
         if (loginResult != null) {
@@ -44,7 +49,7 @@ public class ServerFacade {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws IOException, InterruptedException {
-        var request = buildRequest("DELETE", "session", logoutRequest);
+        var request = buildRequest("DELETE", "/session", logoutRequest);
         var response = sendRequest(request);
         authData = null;
         userState = State.LOGGED_OUT;
@@ -52,19 +57,19 @@ public class ServerFacade {
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws IOException, InterruptedException {
-        var request = buildRequest("GET", "game", listGamesRequest);
+        var request = buildRequest("GET", "/game", listGamesRequest);
         var response = sendRequest(request);
         return handleResponse(response, ListGamesResult.class);
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws IOException, InterruptedException {
-        var request = buildRequest("POST", "game", createGameRequest);
+        var request = buildRequest("POST", "/game", createGameRequest);
         var response = sendRequest(request);
         return handleResponse(response, CreateGameResult.class);
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws IOException, InterruptedException {
-        var request = buildRequest("PUT", "game", joinGameRequest);
+        var request = buildRequest("PUT", "/game", joinGameRequest);
         var response = sendRequest(request);
         return handleResponse(response, JoinGameResult.class);
     }
