@@ -2,10 +2,12 @@ package client;
 
 import chess.ChessGame;
 import model.AuthData;
+import model.GameData;
 import resultsandrequests.*;
 import ui.EscapeSequences;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -332,8 +334,22 @@ public class ChessClient {
         if (params.length != 1) {
             System.out.println("You must specify which game you want to observe.");
         }
+
         else {
-            drawBoard(EscapeSequences.SET_BG_COLOR_WHITE);
+            try {
+                checkIfLoggedIn();
+                ListGamesResult listGamesResult = server.listGames(new ListGamesRequest(authData.authToken()));
+                var games = listGamesResult.games();
+                int gameNum = Integer.parseInt(params[0]);
+                if (gameNum > games.toArray().length) {
+                    throw new ResponseException("Cannot observe a game that doesn't exist");
+                }
+                else {
+                    drawBoard("white");
+                }
+            } catch (Exception e) {
+                handleErrors(e);
+            }
         }
     }
 
