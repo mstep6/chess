@@ -20,7 +20,7 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("\uD83D\uDC51 Welcome to 240 Chess! Type 'help' to get started. \uD83D\uDC51");
+        System.out.println("\uD83D\uDC51 Welcome to 240 Chess! Type 'help' to get started. \uD83D\uDC51" + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
         help();
 
         Scanner scanner = new Scanner(System.in);
@@ -51,7 +51,7 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-//                case "observe" -> observeGame(params);
+                case "observe" -> observeGame(params);
                 case "logout" -> logout();
                 default -> help();
             };
@@ -59,6 +59,104 @@ public class ChessClient {
             System.out.println(e.getMessage());
         }
     }
+
+    public void drawLabeledColumns(String[] columns) {
+        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   ");
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+        for (var letter : columns) {
+            System.out.print(" " + letter + " ");
+        }
+        System.out.print("   " + EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+    }
+
+    public String switchColors(String currColor) {
+        if (currColor.equals(EscapeSequences.SET_BG_COLOR_DARK_GREEN)) {
+            return EscapeSequences.SET_BG_COLOR_WHITE;
+        }
+        return EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+    }
+
+    public void addPawnsToBoard(String pieceColor) {
+        String squareColor;
+        if (pieceColor.equals(EscapeSequences.SET_TEXT_COLOR_BLACK)) {
+            squareColor = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+        }
+        else {
+            squareColor = EscapeSequences.SET_BG_COLOR_WHITE;
+        }
+        for (int i = 0; i < 8; i++) {
+            System.out.print(squareColor +pieceColor + " P ");
+            squareColor = switchColors(squareColor);
+        }
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public void addPieces(String pieceColor, String currColor) {
+        System.out.print(pieceColor + currColor + " R ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor + currColor + " N ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor + currColor + " B ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor + currColor + " K ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor + currColor + " Q ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor + currColor + " B ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor  + currColor + " N ");
+        currColor = switchColors(currColor);
+        System.out.print(pieceColor + currColor + " R ");
+    }
+
+    public void drawBoardSquares(int[] rows) {
+        String currColor = EscapeSequences.SET_BG_COLOR_WHITE;
+
+        for (int i = 0; i < 8; i++) {
+            System.out.print(EscapeSequences.RESET_BG_COLOR + EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print("\n" + EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + rows[i] + " ");
+            if (i == 1) {
+                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            }
+            else if (i == 6) {
+                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLUE);
+            }
+            else if (i == 0) {
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor);
+            }
+            else if (i == 7) {
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor);
+            }
+            else {
+                for (int j = 0; j < 8; j++) {
+                System.out.print(currColor + "   ");
+                currColor = switchColors(currColor);
+                }
+            }
+
+            System.out.print(EscapeSequences.RESET_BG_COLOR + EscapeSequences.SET_TEXT_COLOR_BLACK);
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + rows[i] + " ");
+            currColor = switchColors(currColor);
+        }
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+    }
+
+    public void drawBoard(String color) {
+        String[] columns = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+        int[] rows = new int[]{8, 7, 6, 5, 4, 3, 2, 1};
+        if (color.toLowerCase().equals("black")) {
+            columns = new String[] {"h", "g", "f", "e", "d", "c", "b", "a"};
+            rows = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+        }
+        drawLabeledColumns(columns);
+        drawBoardSquares(rows);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.print("\n");
+        drawLabeledColumns(columns);
+    }
+
+
 
     public void help() {
         if (userState.equals(State.LOGGED_OUT)) {
@@ -190,9 +288,19 @@ public class ChessClient {
             }
             else {
                 System.out.println("You have joined the game.\n");
+                drawBoard(playerColor);
             }
         } catch (Exception e) {
             handleErrors(e);
+        }
+    }
+
+    private void observeGame(String[] params) {
+        if (params.length != 1) {
+            System.out.println("You must specify which game you want to observe.");
+        }
+        else {
+            drawBoard(EscapeSequences.SET_BG_COLOR_WHITE);
         }
     }
 
