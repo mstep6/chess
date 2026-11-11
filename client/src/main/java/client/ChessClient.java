@@ -77,13 +77,19 @@ public class ChessClient {
         return EscapeSequences.SET_BG_COLOR_DARK_GREEN;
     }
 
-    public void addPawnsToBoard(String pieceColor) {
+    public void addPawnsToBoard(String pieceColor, String perspective) {
         String squareColor;
-        if (pieceColor.equals(EscapeSequences.SET_TEXT_COLOR_BLACK)) {
+        if (pieceColor.equals(EscapeSequences.SET_TEXT_COLOR_BLACK) && perspective.equals("white")) {
             squareColor = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
         }
-        else {
+        else if (pieceColor.equals(EscapeSequences.SET_TEXT_COLOR_BLACK) && perspective.equals("black")) {
             squareColor = EscapeSequences.SET_BG_COLOR_WHITE;
+        }
+        else if (pieceColor.equals(EscapeSequences.SET_TEXT_COLOR_BLUE) && perspective.equals("white"))  {
+            squareColor = EscapeSequences.SET_BG_COLOR_WHITE;
+        }
+        else {
+            squareColor = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
         }
         for (int i = 0; i < 8; i++) {
             System.out.print(squareColor +pieceColor + " P ");
@@ -110,23 +116,35 @@ public class ChessClient {
         System.out.print(pieceColor + currColor + " R ");
     }
 
-    public void drawBoardSquares(int[] rows) {
+    public void drawBoardSquares(int[] rows, String perspective) {
         String currColor = EscapeSequences.SET_BG_COLOR_WHITE;
 
         for (int i = 0; i < 8; i++) {
             System.out.print(EscapeSequences.RESET_BG_COLOR + EscapeSequences.SET_TEXT_COLOR_BLACK);
             System.out.print("\n" + EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + rows[i] + " ");
-            if (i == 1) {
-                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLACK);
+            if (i == 1 && perspective.equals("black")) {
+                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLUE, "black");
             }
-            else if (i == 6) {
-                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLUE);
+            else if (i == 6 && perspective.equals("white")) {
+                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLUE, "white");
             }
-            else if (i == 0) {
+            else if (i == 1 && perspective.equals("white")) {
+                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLACK, "white");
+            }
+            else if (i == 6 && perspective.equals("black")) {
+                addPawnsToBoard(EscapeSequences.SET_TEXT_COLOR_BLACK, "black");
+            }
+            else if (i == 0 && perspective.equals("black")) {
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor);
+            }
+            else if (i == 7 && perspective.equals("white")) {
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor);
+            }
+            else if (i == 0 && perspective.equals("white")) {
                 addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor);
             }
-            else if (i == 7) {
-                addPieces(EscapeSequences.SET_TEXT_COLOR_BLUE, currColor);
+            else if (i == 7 && perspective.equals("black")) {
+                addPieces(EscapeSequences.SET_TEXT_COLOR_BLACK, currColor);
             }
             else {
                 for (int j = 0; j < 8; j++) {
@@ -150,7 +168,7 @@ public class ChessClient {
             rows = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
         }
         drawLabeledColumns(columns);
-        drawBoardSquares(rows);
+        drawBoardSquares(rows, color.toLowerCase());
         System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.print("\n");
         drawLabeledColumns(columns);
@@ -229,10 +247,10 @@ public class ChessClient {
     }
 
     private void createGame(String[] params) throws ResponseException {
-        if (params.length != 1) {
+        if (params.length == 0) {
             throw new ResponseException("You need to input a game name to create a game");
         }
-        String gameName = params[0];
+        String gameName = String.join(" ", params);
         try {
             checkIfLoggedIn();
             CreateGameResult createGameResult = server.createGame(new CreateGameRequest(authData.authToken(), gameName));
@@ -269,13 +287,18 @@ public class ChessClient {
     }
 
     private void joinGame(String[] params) throws ResponseException {
+        Integer gameID;
         if (params.length != 2) {
-            throw new ResponseException("You need to input a player color and game ID to join a game");
+            throw new ResponseException("You need to input a game ID and player color to join a game");
         }
         try {
             checkIfLoggedIn();
+            try {
+                gameID = Integer.parseInt(params[0]);
+            } catch (Exception e) {
+                throw new ResponseException("You need to input a game ID and player color to join a game");
+            }
             String playerColor = params[1].toLowerCase();
-            Integer gameID = Integer.parseInt(params[0]);
             ChessGame.TeamColor teamColor;
             if (playerColor.equals("white")) {
                 teamColor = ChessGame.TeamColor.WHITE;
@@ -340,6 +363,9 @@ public class ChessClient {
             System.out.println(e.getMessage());
         }
         else if (e instanceof IOException || e instanceof InterruptedException) {
+            System.out.println("An error occurred");
+        }
+        else {
             System.out.println("An error occurred");
         }
     }
