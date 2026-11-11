@@ -19,16 +19,20 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(3000);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         String portString = String.valueOf(port);
         System.out.println(portString);
         facade = new ServerFacade("http://localhost:" + portString);
     }
-    @BeforeAll
-    public static void clearDb() throws IOException, InterruptedException {
+
+    @BeforeEach
+    public void clearDb() throws IOException, InterruptedException {
         facade.clearDb();
+        facade.setAuthData(null);
+        facade.setUserState(State.LOGGED_OUT);
     }
+
 
     @AfterAll
     static void stopServer() {
@@ -104,12 +108,12 @@ public class ServerFacadeTests {
         Assertions.assertNull(logoutResult);
     }
 
-//    @Test
-//    public void logoutInvalidAuth() throws IOException, InterruptedException {
-//        var registerResult = facade.register(new RegisterRequest("coolUser", "coolPassword", "coolEmail"));
-//        var logoutResult = facade.logout(new LogoutRequest(null));
-//        Assertions.assertNull(logoutResult);
-//    }
+    @Test
+    public void logoutInvalidAuth() throws IOException, InterruptedException {
+        var registerResult = facade.register(new RegisterRequest("coolUser", "coolPassword", "coolEmail"));
+        facade.setAuthData(null);
+        Assertions.assertThrows(NullPointerException.class, () -> facade.logout(new LogoutRequest(null)));
+    }
 
     @Test
     public void listGames() throws IOException, InterruptedException {
