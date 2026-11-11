@@ -28,9 +28,9 @@ public class ServerFacadeTests {
 
     @BeforeEach
     public void clearDb() throws IOException, InterruptedException {
+        facade.setUserState(State.LOGGED_OUT);
         facade.clearDb();
         facade.setAuthData(null);
-        facade.setUserState(State.LOGGED_OUT);
     }
 
 
@@ -160,8 +160,8 @@ public class ServerFacadeTests {
     public void createGameWithoutLoggingIn() throws IOException, InterruptedException {
         var registerResult = facade.register(new RegisterRequest("harryPotter", "gryffindor", "theChosenOne"));
         facade.logout(new LogoutRequest(registerResult.authToken()));
-        var createGame = facade.createGame(new CreateGameRequest(registerResult.authToken(), "wizardsChess"));
-        Assertions.assertNull(createGame);
+        var result = facade.createGame(new CreateGameRequest(registerResult.authToken(), "wizardsChess"));
+        Assertions.assertNull(result);
     }
 
     @Test
