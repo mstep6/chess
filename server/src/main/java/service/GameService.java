@@ -22,6 +22,14 @@ public class GameService {
     private GameDAO gameDAO;
     private int gameID = 0;
 
+    public int getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
     public GameService() throws DataAccessException {
         try {
             userDAO = new UserDAODatabase();

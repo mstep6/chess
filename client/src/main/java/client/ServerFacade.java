@@ -17,6 +17,26 @@ public class ServerFacade {
     private AuthData authData;
     private State userState = State.LOGGED_OUT;
 
+    public AuthData getAuthData() {
+        return authData;
+    }
+
+    public void setAuthData(AuthData authData) {
+        this.authData = authData;
+    }
+
+
+
+    public State getUserState() {
+        return userState;
+    }
+
+    public void setUserState(State userState) {
+        this.userState = userState;
+    }
+
+
+
     public ServerFacade(String url) {
         serverURL = url;
     }
@@ -51,8 +71,10 @@ public class ServerFacade {
     public LogoutResult logout(LogoutRequest logoutRequest) throws IOException, InterruptedException {
         var request = buildRequest("DELETE", "/session", logoutRequest);
         var response = sendRequest(request);
-        authData = null;
-        userState = State.LOGGED_OUT;
+        if (response != null) {
+            authData = null;
+            userState = State.LOGGED_OUT;
+        }
         return handleResponse(response, LogoutResult.class);
     }
 
