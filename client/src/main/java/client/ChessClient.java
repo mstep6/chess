@@ -259,7 +259,8 @@ public class ChessClient {
                 var games = listGamesResult.games();
                 for (int i = 1; i <= games.size(); i++) {
                     var game = games.get(i-1);
-                    System.out.println(String.format("%d. Game Name: %s White Username: %s Black Username: %s", i, game.gameName(), game.whiteUsername(), game.blackUsername()));
+                    System.out.println(String.format("%d. Game Name: %s White Username: %s Black Username: %s",
+                            i, game.gameName(), game.whiteUsername(), game.blackUsername()));
                 }
             }
         } catch (Exception e) {
