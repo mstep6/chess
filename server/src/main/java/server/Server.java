@@ -203,6 +203,7 @@ public class Server {
     public void clearDb(Context ctx) throws DataAccessException {
         try {
             userService.clearDatabase();
+            gameService.setGameID(0);
         } catch (Exception e) {
             if (e instanceof DataAccessException) {
                 setStatus(500, ctx);
